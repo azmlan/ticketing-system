@@ -11,7 +11,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->web(append: [
+            \App\Modules\Shared\Middleware\SetLocaleMiddleware::class,
+            \App\Modules\Shared\Middleware\SecurityHeadersMiddleware::class,
+        ]);
+        $middleware->alias([
+            'permission' => \App\Modules\Shared\Middleware\PermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

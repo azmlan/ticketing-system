@@ -1,59 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ticketing System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Internal IT support ticketing system — Laravel 12 + Livewire 3 modular monolith.  
+Single-tenant deployments. AR (RTL) + EN localization.
 
-## About Laravel
+## Prerequisites
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Docker & Docker Compose
+- Shared `_infra/` services running (MySQL 8.0, Redis 7, Mailpit, phpMyAdmin)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```bash
+cd /path/to/_infra && docker compose up -d
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Getting Started
 
-## Learning Laravel
+```bash
+# 1. Copy environment config
+cp .env.example .env
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# 2. Build and start the stack (app + Nginx; connects to shared _infra)
+docker compose up -d --build
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# 3. Generate application key
+docker compose exec app php artisan key:generate
 
-## Laravel Sponsors
+# 4. Run migrations
+docker compose exec app php artisan migrate
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# 5. Seed the database
+docker compose exec app php artisan db:seed
+```
 
-### Premium Partners
+App is available at **http://localhost:8001**
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Daily Commands
 
-## Contributing
+```bash
+# Start stack
+docker compose up -d --build
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Reset database
+docker compose exec app php artisan migrate:fresh --seed
 
-## Code of Conduct
+# Run test suite (Pest)
+docker compose exec app php artisan test
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Run a single test by name
+docker compose exec app php artisan test --filter=SmokeTest
 
-## Security Vulnerabilities
+# Code formatting (Pint)
+docker compose exec app vendor/bin/pint
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Queue worker dashboard (Horizon)
+docker compose exec app php artisan horizon
 
-## License
+# Create SuperUser (after seeding)
+docker compose exec app php artisan app:create-superuser
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Language | PHP 8.4-fpm |
+| Framework | Laravel 12 |
+| Frontend | Livewire 3 + Alpine.js 3 |
+| CSS | Tailwind CSS 4 |
+| Database | MySQL 8.0 (shared `_infra/`) |
+| Cache / Queue | Redis 7 (shared `_infra/`) |
+| Queue Monitor | Laravel Horizon 5 |
+| Auth | Laravel Sanctum 4 |
+| Mail (dev) | Mailpit (shared `_infra/`) |
+| Web Server | Nginx alpine |
+
+## Module Structure
+
+```
+app/Modules/
+  Shared/         Kernel: User, permissions, base traits, middleware
+  Auth/           Registration, login, password reset
+  Tickets/        Core ticketing, lifecycle, state machine
+  Assignment/     Group assignment, self-assign, peer transfers
+  Escalation/     Condition reports, maintenance requests, approvals
+  Communication/  Comments, notification engine
+  SLA/            SLA timers, business hours, warning/breach logic
+  CSAT/           Post-resolution feedback
+  Precedent/      Resolution capture, auto-suggest, linking
+  Reporting/      Reports, CSV/XLSX export
+  Admin/          Admin configuration panel
+  Audit/          Audit logging
+```
+
+## Shared Infrastructure
+
+MySQL, Redis, phpMyAdmin, and Mailpit are provided by a shared `_infra/` directory.  
+**Do not add these services to this `docker-compose.yml`.** Connect via the `shared-dev` external network.
+
+| Service | URL |
+|---------|-----|
+| App | http://localhost:8001 |
+| phpMyAdmin | http://localhost:8080 |
+| Mailpit | http://localhost:8025 |

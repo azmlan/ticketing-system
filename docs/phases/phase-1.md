@@ -6,9 +6,9 @@
 
 ## Tasks
 
-- [ ] **Task 1.1** — Bootstrap Docker stack, Laravel 12 + Livewire 3 starter kit, Horizon, Tailwind 4, `app/Modules/*` directory scaffold, connection to shared `_infra/` services (MySQL, Redis, Mailpit), `.env.example`, Pest smoke test hitting `/`.
-- [ ] **Task 1.2** — Migrations, models, factories for `users` (ULIDs, `is_tech`, `is_super_user`, `locale`, SoftDeletes), `departments`, `locations` (bilingual `name_ar`/`name_en`, `is_active`, `sort_order`, SoftDeletes) + schema feature tests.
-- [ ] **Task 1.3** — Migrations, models, factories for `permissions`, `permission_user`, `tech_profiles`; build `config/permissions.php` registry with all keys from §6.3 + seeder + seeder tests.
+- [x] **Task 1.1** — Bootstrap Docker stack, Laravel 12 + Livewire 3 starter kit, Horizon, Tailwind 4, `app/Modules/*` directory scaffold, connection to shared `_infra/` services (MySQL, Redis, Mailpit), `.env.example`, Pest smoke test hitting `/`.
+- [x] **Task 1.2** — Migrations, models, factories for `users` (ULIDs, `is_tech`, `is_super_user`, `locale`, SoftDeletes), `departments`, `locations` (bilingual `name_ar`/`name_en`, `is_active`, `sort_order`, SoftDeletes) + schema feature tests.
+- [x] **Task 1.3** — Migrations, models, factories for `permissions`, `permission_user`, `tech_profiles`; build `config/permissions.php` registry with all keys from §6.3 + seeder + seeder tests.
 - [ ] **Task 1.4** — Define `AuthProviderInterface` + `EmailPasswordAuthProvider` binding; Livewire registration/login/password-reset with password policy (10 chars + complexity); Redis rate limits (5/min login IP+email, 3/hr registration, 3/hr reset); feature tests for happy/edge paths.
 - [ ] **Task 1.5** — Profile edit Livewire (all registration fields + locale toggle); `SetLocaleMiddleware` applying `dir`/`lang` to `<html>`; AR/EN translation file scaffolds organized by module; logical-property RTL verification test.
 - [ ] **Task 1.6** — Permission middleware (`can:<key>`), Blade `@permission` directive, Gate wiring with SuperUser bypass; authorization feature tests (grant, revoke, middleware block, Blade hide).
