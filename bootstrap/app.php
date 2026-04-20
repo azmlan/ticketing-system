@@ -14,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Modules\Shared\Middleware\SetLocaleMiddleware::class,
         ]);
+        $middleware->alias([
+            'permission' => \App\Modules\Shared\Middleware\PermissionMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

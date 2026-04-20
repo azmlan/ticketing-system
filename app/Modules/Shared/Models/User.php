@@ -71,4 +71,10 @@ class User extends Authenticatable
     {
         return $this->hasOne(TechProfile::class);
     }
+
+    public function hasPermission(string $key): bool
+    {
+        // TODO: Phase 10.4 (§15.4) will add Redis caching; hits DB on every call for now
+        return $this->permissions()->where('key', $key)->exists();
+    }
 }
