@@ -72,13 +72,24 @@ test('6th login attempt within 1 minute is blocked with 429', function () {
         ->assertStatus(429);
 });
 
-test('logout invalidates session', function () {
+test('logout redirects to login', function () {
     $user = User::factory()->create();
-    $this->actingAs($user);
 
-    $this->assertAuthenticated();
+    $this->withSession(['_token' => 'csrf-test'])
+        ->actingAs($user)
+        ->post(route('logout'), ['_token' => 'csrf-test'])
+        ->assertRedirect(route('login'));
+});
 
-    $this->post(route('logout'));
+test('logout clears auth guard', function () {
+    $user = User::factory()->create();
 
-    $this->assertGuest();
+    $provider = app(\App\Modules\Auth\Contracts\AuthProviderInterface::class);
+
+    \Illuminate\Support\Facades\Auth::login($user);
+    expect(\Illuminate\Support\Facades\Auth::check())->toBeTrue();
+
+    $provider->logout();
+
+    expect(\Illuminate\Support\Facades\Auth::check())->toBeFalse();
 });

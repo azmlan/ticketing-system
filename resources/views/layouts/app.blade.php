@@ -11,8 +11,8 @@
     @endif
     @livewireStyles
 </head>
-<body class="min-h-screen bg-gray-50 flex items-center justify-center">
-    <main class="w-full max-w-md px-6 py-8">
+<body class="min-h-screen bg-gray-100">
+    <main class="py-8 px-4">
         {{ $slot }}
     </main>
     @livewireScripts

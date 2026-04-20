@@ -6,6 +6,7 @@ use App\Modules\Auth\Contracts\AuthProviderInterface;
 use App\Modules\Auth\Livewire\Login;
 use App\Modules\Auth\Livewire\PasswordReset;
 use App\Modules\Auth\Livewire\PasswordResetRequest;
+use App\Modules\Auth\Livewire\Profile;
 use App\Modules\Auth\Livewire\Register;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -24,7 +25,8 @@ class AuthServiceProvider extends ServiceProvider
         Livewire::component('auth.login', Login::class);
         Livewire::component('auth.password-reset-request', PasswordResetRequest::class);
         Livewire::component('auth.password-reset', PasswordReset::class);
+        Livewire::component('auth.profile', Profile::class);
 
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        Route::middleware('web')->group(__DIR__ . '/../Routes/web.php');
     }
 }

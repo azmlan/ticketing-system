@@ -3,6 +3,7 @@
 use App\Modules\Auth\Livewire\Login;
 use App\Modules\Auth\Livewire\PasswordReset;
 use App\Modules\Auth\Livewire\PasswordResetRequest;
+use App\Modules\Auth\Livewire\Profile;
 use App\Modules\Auth\Livewire\Register;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +15,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', Profile::class)->name('profile');
+
     Route::post('/logout', function () {
         app(\App\Modules\Auth\Contracts\AuthProviderInterface::class)->logout();
         return redirect()->route('login');
