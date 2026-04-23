@@ -8,7 +8,7 @@ function flatKeys(string $locale, string $file): array
     return array_keys(Arr::dot(require $path));
 }
 
-$translationFiles = ['auth', 'profile', 'common', 'validation', 'errors', 'layout', 'promote'];
+$translationFiles = ['auth', 'profile', 'common', 'validation', 'errors', 'layout', 'promote', 'tickets'];
 
 foreach ($translationFiles as $file) {
     test("{$file} translation files have matching keys in ar and en", function () use ($file) {

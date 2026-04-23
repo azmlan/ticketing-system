@@ -48,4 +48,9 @@ class Subcategory extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function localizedName(): string
+    {
+        return app()->getLocale() === 'ar' ? $this->name_ar : $this->name_en;
+    }
 }

@@ -13,4 +13,8 @@ return [
         'max_attempts' => 3,
         'decay_seconds' => 3600,
     ],
+    'ticket_create' => [
+        'max_attempts' => 10,
+        'decay_seconds' => 3600,
+    ],
 ];
