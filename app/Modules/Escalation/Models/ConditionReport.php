@@ -2,6 +2,7 @@
 
 namespace App\Modules\Escalation\Models;
 
+use App\Modules\Admin\Models\Location;
 use App\Modules\Shared\Models\User;
 use Database\Factories\ConditionReportFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -55,5 +56,10 @@ class ConditionReport extends Model
     public function reviewer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
     }
 }

@@ -155,4 +155,13 @@
             </button>
         </div>
     @endif
+
+    {{-- Condition Report (tech only, in_progress tickets) --}}
+    @auth
+        @if (auth()->user()->is_tech && $ticket->status->value === 'in_progress')
+            <div class="mt-8 border-t pt-6">
+                @livewire('escalation.submit-condition-report', ['ticketId' => $ticket->id], key('condition-report-' . $ticket->id))
+            </div>
+        @endif
+    @endauth
 </div>
