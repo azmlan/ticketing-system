@@ -6,7 +6,7 @@
 
 ## Tasks
 
-- [ ] **Task 2.1** — `tickets` + `ticket_counters` migrations/models/factories; `TicketNumberGenerator` service using `DB::transaction()` + `lockForUpdate()` returning zero-padded `TKT-XXXXXXX`; unit tests including concurrent-increment race test.
+- [x] **Task 2.1** — `tickets` + `ticket_counters` migrations/models/factories; `TicketNumberGenerator` service using `DB::transaction()` + `lockForUpdate()` returning zero-padded `TKT-XXXXXXX`; unit tests including concurrent-increment race test.
 - [ ] **Task 2.2** — `categories` (with `group_id`, `version`), `subcategories` (with `is_required`, `version`), `groups`, `group_user` pivot migrations/models/factories + schema tests.
 - [ ] **Task 2.3** — `transfer_requests` (enum `pending/accepted/rejected/revoked`, `(ticket_id, status)` index) and `ticket_attachments` migrations/models/factories + schema tests.
 - [ ] **Task 2.4** — `TicketStateMachine` service enforcing every row of §7.4 transition table; `TicketStatusChanged` event fired on each transition; invalid transitions throw `InvalidStatusTransition`; unit tests cover all valid paths AND representative invalid transitions.
