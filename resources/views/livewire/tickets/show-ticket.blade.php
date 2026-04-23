@@ -164,4 +164,13 @@
             </div>
         @endif
     @endauth
+
+    {{-- Review Condition Report (escalation.approve, awaiting_approval tickets) --}}
+    @can('escalation.approve')
+        @if ($ticket->status->value === 'awaiting_approval')
+            <div class="mt-8 border-t pt-6">
+                @livewire('escalation.review-condition-report', ['ticketId' => $ticket->id], key('review-cr-' . $ticket->id))
+            </div>
+        @endif
+    @endcan
 </div>
