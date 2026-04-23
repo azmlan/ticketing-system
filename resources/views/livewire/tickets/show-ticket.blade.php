@@ -173,4 +173,29 @@
             </div>
         @endif
     @endcan
+
+    {{-- Maintenance Request Downloads (action_required) --}}
+    @if ($ticket->status->value === 'action_required')
+        @auth
+            @php
+                $canDownload = auth()->id() === $ticket->requester_id
+                    || auth()->id() === $ticket->assigned_to
+                    || auth()->user()->is_super_user
+                    || auth()->user()->hasPermission('escalation.approve');
+            @endphp
+            @if ($canDownload)
+                <div class="mt-8 border-t pt-6">
+                    <h3 class="font-semibold mb-3">{{ __('escalation.maintenance_request.title') }}</h3>
+                    <div class="flex flex-wrap gap-3">
+                        <a href="{{ route('escalation.maintenance-request.download', [$ticket->id, 'ar']) }}">
+                            {{ __('escalation.maintenance_request.export_ar') }}
+                        </a>
+                        <a href="{{ route('escalation.maintenance-request.download', [$ticket->id, 'en']) }}">
+                            {{ __('escalation.maintenance_request.export_en') }}
+                        </a>
+                    </div>
+                </div>
+            @endif
+        @endauth
+    @endif
 </div>

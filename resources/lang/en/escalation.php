@@ -29,6 +29,12 @@ return [
         'cancel'                   => 'Cancel',
     ],
 
+    'maintenance_request' => [
+        'title'     => 'Maintenance Request',
+        'export_ar' => 'Export in Arabic',
+        'export_en' => 'Export in English',
+    ],
+
     'validation' => [
         'report_type_required'        => 'Report type is required.',
         'current_condition_required'  => 'Current condition is required.',

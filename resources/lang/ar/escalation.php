@@ -29,6 +29,12 @@ return [
         'cancel'                   => 'إلغاء',
     ],
 
+    'maintenance_request' => [
+        'title'     => 'طلب الصيانة',
+        'export_ar' => 'تصدير بالعربية',
+        'export_en' => 'تصدير بالإنجليزية',
+    ],
+
     'validation' => [
         'report_type_required'        => 'نوع التقرير مطلوب.',
         'current_condition_required'  => 'الحالة الراهنة مطلوبة.',
