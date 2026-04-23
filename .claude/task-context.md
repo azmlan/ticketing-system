@@ -1,93 +1,84 @@
-# Session Context — Ticketing System Phase 1
+# Session Context — Ticketing System Phase 2
 
-## Branch
-`feature/phase-1-task-1-1-bootstrap` (all phase-1 tasks commit here)
+## Branch convention
+`feature/phase-2-task-X.Y-short-name` per task
 
 ## Docker command prefix
 ```bash
-docker compose -f /Users/abdulaziz/projects/ticketing-system/docker-compose.yml exec app
+docker compose exec app php artisan ...
 ```
-Example: `... exec app php artisan test`
 
 ## Completed tasks
+
+### Phase 1 (all done)
 - ✅ 1.1 — Docker + Laravel 12 bootstrap, Pest, Horizon, Sanctum, module scaffold
 - ✅ 1.2 — users, departments, locations migrations + models + factories + tests
 - ✅ 1.3 — permissions, permission_user, tech_profiles migrations + models + PermissionSeeder + tests
 - ✅ 1.4 — AuthProviderInterface + EmailPasswordAuthProvider + Livewire auth flows + Redis rate limits + password policy + tests/Feature/Auth/
 - ✅ 1.5 — Profile edit + SetLocaleMiddleware + AR/EN translation scaffolds + tests/Feature/Profile/
+- ✅ 1.6 — PermissionMiddleware, Gate definitions, Blade directives, SuperUser bypass, 403 view
+- ✅ 1.7 — PromoteToTech, CreateSuperUser command, SecurityHeaders, app layout, locale toggle
 
-## Key file locations
+### Phase 2
+- ✅ 2.1 — 8 migrations (groups→categories→subcategories→tickets→ticket_counters→group_user→transfer_requests→ticket_attachments), GroupSeeder/CategorySeeder/SubcategorySeeder, MigrationStructureTest
+- ✅ 2.2 — 6 models (Ticket, TicketAttachment, TransferRequest, Category, Subcategory, Group), TicketStatus/TicketPriority enums, EmployeeTicketScope, 4 factories, 28 Unit/Models tests
+- ✅ 2.3 — TicketStateMachine, InvalidTicketTransitionException (HTTP 422), TicketStatusChanged event, TicketsServiceProvider, 23 Unit/Services tests
+
+## Phase 2 key file locations
+```
+database/migrations/
+  2026_04_21_000001_create_groups_table.php
+  2026_04_21_000002_create_categories_table.php
+  2026_04_21_000003_create_subcategories_table.php
+  2026_04_21_000004_create_tickets_table.php          ← FULLTEXT MySQL-only gated
+  2026_04_21_000005_create_ticket_counters_table.php  ← seeds id=1,last_number=0 inline
+  2026_04_21_000006_create_group_user_table.php
+  2026_04_21_000007_create_transfer_requests_table.php
+  2026_04_21_000008_create_ticket_attachments_table.php
+
+database/seeders/
+  GroupSeeder.php        ← 2 groups (AR/EN)
+  CategorySeeder.php     ← 2 categories, one per group
+  SubcategorySeeder.php  ← 2 subcategories per category (4 total)
+
+tests/Feature/Phase2/MigrationStructureTest.php  ← 15 pass, 5 MySQL-only skipped
+tests/Pest.php  ← Feature/Phase2 added to RefreshDatabase list
+```
+
+## Phase 1 key file locations
 ```
 app/Modules/Shared/Models/
-  User.php          ← Authenticatable, HasUlids, SoftDeletes
-  Department.php
-  Location.php
-  Permission.php
-  TechProfile.php
-
-app/Modules/Shared/Middleware/
-  SetLocaleMiddleware.php  ← reads user.locale, shares $dir/$lang via View::share()
+  User.php, Department.php, Location.php, Permission.php, TechProfile.php
 
 app/Modules/Auth/
   Contracts/AuthProviderInterface.php
   Providers/EmailPasswordAuthProvider.php
-  Providers/AuthServiceProvider.php   ← bound to bootstrap/providers.php; uses Route::middleware('web')
-  Livewire/Register.php
-  Livewire/Login.php
-  Livewire/PasswordResetRequest.php
-  Livewire/PasswordReset.php
-  Livewire/Profile.php
-  Routes/web.php  ← /register /login /password/reset /profile /logout; all wrapped in web middleware
+  Routes/web.php
 
-database/migrations/
-  2026_04_20_000001_create_departments_table.php
-  2026_04_20_000002_create_locations_table.php
-  2026_04_20_000003_create_users_table.php
-  2026_04_20_000004_create_permissions_table.php
-  2026_04_20_000005_create_permission_user_table.php
-  2026_04_20_000006_create_tech_profiles_table.php
-
-config/permissions.php   ← 19 permission keys, source of truth
-config/role_bundles.php  ← technician / group_manager / it_manager arrays
-config/rate_limits.php   ← login/register/password_reset limits
-
-database/seeders/PermissionSeeder.php  ← idempotent upsert by key
-
-resources/lang/{ar,en}/
-  auth.php / profile.php / common.php / validation.php  ← full key parity, both locales
-
-resources/views/
-  layouts/guest.blade.php   ← uses $dir/$lang from View::share
-  layouts/app.blade.php     ← uses $dir/$lang from View::share
-  livewire/auth/{register,login,password-reset-request,password-reset,profile}.blade.php
-
-tests/
-  Pest.php  ← RefreshDatabase in Feature/Schema, Feature/Auth, Feature/Profile
-  TestCase.php  ← withoutVite() in setUp()
-  Feature/Schema/   ← 38 schema tests
-  Feature/Auth/     ← 21 auth tests (ContainerTest, LoginTest, PasswordResetTest, RegistrationTest)
-  Feature/Profile/  ← 17 profile/locale/translation-parity tests
+config/permissions.php   ← 19 permission keys
+config/role_bundles.php
+config/rate_limits.php
+database/seeders/PermissionSeeder.php
 ```
 
-## Critical SPEC-over-task-file overrides (apply to all future tasks)
+## Critical SPEC-over-task-file overrides
 - Users have `full_name` (not `name_ar`/`name_en`) and `phone` (not `mobile`)
 - `users.department_id` / `users.location_id` → ON DELETE SET NULL (not RESTRICT)
-- `permissions` table column is `group_key` (not `group` — reserved word)
-- `permission_user` has no separate ULID PK; composite PK (user_id, permission_id)
-- `tech_profiles.promoted_by` → ON DELETE RESTRICT, NOT NULL (per SPEC §6.2)
-- No SoftDeletes on tech_profiles or permissions (SPEC §2.3 "Tables that use NEITHER")
+- `permissions` table column is `group_key` (not `group`)
+- `permission_user` — composite PK (user_id, permission_id), no separate ULID PK
+- `tech_profiles.promoted_by` → ON DELETE RESTRICT, NOT NULL
+- No SoftDeletes on tech_profiles or permissions
+- Migration date prefix for Phase 2: `2026_04_21_*` (not `2025_02_*` as in task files — needed to run after Phase 1)
 
 ## Infrastructure notes
-- Laravel 12 uses `bootstrap/app.php` (NOT app/Http/Kernel.php) for middleware registration
-- Module routes loaded via `Route::middleware('web')->group(...)` in service provider (NOT loadRoutesFrom) to pick up full web stack (session, CSRF, SetLocaleMiddleware)
-- CSRF is NOT auto-disabled in tests for these routes — POST tests must provide matching `_token` in session + request body, e.g.: `$this->withSession(['_token' => 'x'])->post(url, ['_token' => 'x'])`
-- `withoutVite()` is called globally in `TestCase::setUp()` to allow full-page rendering tests
-- `bootstrap/providers.php` registers: AppServiceProvider, HorizonServiceProvider, AuthServiceProvider
+- Laravel 12 uses `bootstrap/app.php` (NOT app/Http/Kernel.php)
+- Module routes loaded via `Route::middleware('web')->group(...)` in service provider
+- Tests use SQLite in-memory (phpunit.xml); MySQL-only assertions use `markTestSkipped`
+- `withoutVite()` called globally in TestCase::setUp()
 
-## Test count so far
-77 tests, 194 assertions — all passing
+## Test count
+181 tests, 475 assertions — all passing (5 MySQL-only skipped)
 
 ## Next task
-**Task 1.6** — docs/tasks/phase-1/task-1-6.md
-Permission middleware + Blade directives (@permission/@unlesspermission) + Gate definitions +
-SuperUser bypass + custom 403 view + tests/Feature/Authorization/
+**Task 2.4** — docs/tasks/phase-2/task-2-4.md
+TicketStateMachine already done in 2.3 (task file numbering shifted). Check task-2-4.md.
