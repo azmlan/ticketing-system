@@ -30,8 +30,8 @@ class SlaPauseLog extends Model
     protected function casts(): array
     {
         return [
-            'paused_at'        => 'datetime',
-            'resumed_at'       => 'datetime',
+            'paused_at' => 'datetime',
+            'resumed_at' => 'datetime',
             'duration_minutes' => 'integer',
         ];
     }

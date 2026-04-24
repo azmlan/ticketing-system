@@ -35,13 +35,13 @@ class TicketSla extends Model
     protected function casts(): array
     {
         return [
-            'response_met_at'             => 'datetime',
-            'last_clock_start'            => 'datetime',
-            'is_clock_running'            => 'boolean',
-            'response_elapsed_minutes'    => 'integer',
-            'resolution_elapsed_minutes'  => 'integer',
-            'response_target_minutes'     => 'integer',
-            'resolution_target_minutes'   => 'integer',
+            'response_met_at' => 'datetime',
+            'last_clock_start' => 'datetime',
+            'is_clock_running' => 'boolean',
+            'response_elapsed_minutes' => 'integer',
+            'resolution_elapsed_minutes' => 'integer',
+            'response_target_minutes' => 'integer',
+            'resolution_target_minutes' => 'integer',
         ];
     }
 

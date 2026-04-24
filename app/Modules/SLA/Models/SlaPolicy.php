@@ -6,7 +6,6 @@ use Database\Factories\SlaPolicyFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class SlaPolicy extends Model
 {
@@ -29,9 +28,9 @@ class SlaPolicy extends Model
     protected function casts(): array
     {
         return [
-            'use_24x7'                   => 'boolean',
-            'response_target_minutes'    => 'integer',
-            'resolution_target_minutes'  => 'integer',
+            'use_24x7' => 'boolean',
+            'response_target_minutes' => 'integer',
+            'resolution_target_minutes' => 'integer',
         ];
     }
 }

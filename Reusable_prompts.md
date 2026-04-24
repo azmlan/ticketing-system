@@ -11,8 +11,8 @@
 - Repeat
 
 ## This is the Prompt u should use : 
-Now generate all task-X-X.md files for Phase [4] only.
-Location: docs/tasks/phase-[4]/
+Now generate all task-X-X.md files for Phase [5] only.
+Location: docs/tasks/phase-[5]/
 Format: prompt-style, not documentation. Each file must include:
 - Context (1-2 lines)
 - Task (imperative)
@@ -31,9 +31,9 @@ Read .claude/task-context.md then execute Task 1.6 per docs/tasks/phase-1/task-1
 
 ======================================
 # Rusable Executing Task prompt : 
-## Phase 4
-Execute the next unchecked task in docs/phases/phase-4.md.
-Read the corresponding task file in docs/tasks/phase-4/.
+## Phase 5
+Execute the next unchecked task in docs/phases/phase-5.md.
+Read the corresponding task file in docs/tasks/phase-5/.
 Follow CLAUDE.md and SPEC.md strictly.
-Write Pest tests, run them, then propose a commit message and wait for approval.
-When I approve, tick the checkbox in phase-4.md and update .claude/task-context.md with the completed task, key file locations, and current test count.
+Write Pest tests, run them, then  commit message and wait for me to give you the next task.
+When I approve, tick the checkbox in phase-5.md and update .claude/task-context.md with the completed task, key file locations, and current test count.
