@@ -8,4 +8,5 @@ return [
     App\Modules\Tickets\Providers\TicketsServiceProvider::class,
     App\Modules\Assignment\Providers\AssignmentServiceProvider::class,
     App\Modules\Escalation\Providers\EscalationServiceProvider::class,
+    App\Modules\Communication\Providers\CommunicationServiceProvider::class,
 ];
