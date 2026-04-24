@@ -17,8 +17,8 @@ class EmployeeTicketScope implements Scope
 
         $user = auth()->user();
 
-        // SuperUsers and anyone with ticket.view-all see all tickets.
-        if ($user->is_super_user || $user->hasPermission('ticket.view-all')) {
+        // SuperUsers, all techs, and anyone with ticket.view-all see all tickets.
+        if ($user->is_super_user || $user->is_tech || $user->hasPermission('ticket.view-all')) {
             return;
         }
 

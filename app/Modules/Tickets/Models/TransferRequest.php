@@ -3,13 +3,20 @@
 namespace App\Modules\Tickets\Models;
 
 use App\Modules\Shared\Models\User;
+use Database\Factories\TransferRequestFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TransferRequest extends Model
 {
-    use HasUlids;
+    use HasFactory, HasUlids;
+
+    protected static function newFactory(): TransferRequestFactory
+    {
+        return TransferRequestFactory::new();
+    }
 
     protected $fillable = [
         'ticket_id',

@@ -6,13 +6,15 @@ WORKDIR /var/www/html
 # System deps + Node.js in one layer
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev libzip-dev zip unzip \
+    libjpeg62-turbo-dev \
     && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# PHP extensions — GD configured with JPEG support
+RUN docker-php-ext-configure gd --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Redis extension
 RUN pecl install redis && docker-php-ext-enable redis
