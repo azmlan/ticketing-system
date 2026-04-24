@@ -334,3 +334,54 @@ it('TicketStatusChanged action_required from awaiting_final_approval dispatches 
         $job->recipient->id === $requester->id && $job->triggerKey === 'form_rejected'
     );
 });
+
+// ─── Plain-text fallback ──────────────────────────────────────────────────────
+
+it('mailable renders a plain-text fallback free of HTML tags', function () {
+    app()->setLocale('en');
+
+    $recipient = User::factory()->create(['locale' => 'en', 'full_name' => 'Jane Smith']);
+    $ticket    = Ticket::factory()->create(['subject' => 'Printer is broken']);
+
+    $mailable = new TicketNotification(
+        triggerKey: 'ticket_created',
+        ticketId: $ticket->id,
+        displayNumber: $ticket->display_number,
+        ticketSubject: $ticket->subject,
+        recipientName: $recipient->full_name,
+    );
+
+    $text = $mailable->render();
+
+    // The text part must exist (Content has both view: and text:)
+    // Render the text view directly to verify it is tag-free
+    $textContent = view('emails.notifications.text.ticket_created', [
+        'displayNumber' => $ticket->display_number,
+        'ticketSubject' => $ticket->subject,
+        'ticketUrl'     => route('tickets.show', $ticket->id),
+        'recipientName' => $recipient->full_name,
+    ])->render();
+
+    expect($textContent)->not->toContain('<')
+        ->and($textContent)->not->toContain('>')
+        ->and($textContent)->toContain($ticket->display_number)
+        ->and($textContent)->toContain('Jane Smith');
+});
+
+it('plain-text fallback renders in AR locale without HTML', function () {
+    app()->setLocale('ar');
+
+    $recipient = User::factory()->create(['locale' => 'ar', 'full_name' => 'محمد علي']);
+    $ticket    = Ticket::factory()->create();
+
+    $textContent = view('emails.notifications.text.ticket_created', [
+        'displayNumber' => $ticket->display_number,
+        'ticketSubject' => $ticket->subject,
+        'ticketUrl'     => route('tickets.show', $ticket->id),
+        'recipientName' => $recipient->full_name,
+    ])->render();
+
+    expect($textContent)->not->toContain('<')
+        ->and($textContent)->toContain('تم استلام')
+        ->and($textContent)->toContain($ticket->display_number);
+});

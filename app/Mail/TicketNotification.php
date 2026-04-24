@@ -27,14 +27,17 @@ class TicketNotification extends Mailable
 
     public function content(): Content
     {
+        $data = [
+            'displayNumber' => $this->displayNumber,
+            'ticketSubject' => $this->ticketSubject,
+            'ticketUrl'     => route('tickets.show', $this->ticketId),
+            'recipientName' => $this->recipientName,
+        ];
+
         return new Content(
             view: 'emails.notifications.' . $this->triggerKey,
-            with: [
-                'displayNumber' => $this->displayNumber,
-                'ticketSubject' => $this->ticketSubject,
-                'ticketUrl'     => route('tickets.show', $this->ticketId),
-                'recipientName' => $this->recipientName,
-            ],
+            text: 'emails.notifications.text.' . $this->triggerKey,
+            with: $data,
         );
     }
 }
