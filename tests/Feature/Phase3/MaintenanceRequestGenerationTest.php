@@ -97,7 +97,9 @@ it('TicketStatusChanged with non-action_required does not dispatch generation jo
     // Transition to in_progress (reject), not action_required
     app(TicketStateMachine::class)->transition($ticket, 'in_progress', $approver);
 
-    Queue::assertNothingPushed();
+    // The notification engine may push SendNotificationJob (escalation_updated), but
+    // the maintenance-request generation job must NOT be pushed for this transition.
+    Queue::assertNotPushed(\App\Modules\Escalation\Jobs\GenerateMaintenanceRequestDocxJob::class);
 });
 
 // ─── Listener: synchronous record creation ────────────────────────────────────

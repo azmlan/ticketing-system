@@ -5,21 +5,29 @@ namespace App\Modules\Tickets\Livewire;
 use App\Modules\Admin\Models\Category;
 use App\Modules\Admin\Models\Subcategory;
 use App\Modules\Tickets\Enums\TicketStatus;
+use App\Modules\Tickets\Events\TicketStatusChanged;
 use App\Modules\Tickets\Models\Ticket;
+use App\Modules\Tickets\Services\FileUploadService;
 use App\Modules\Tickets\Services\RichTextSanitizer;
 use App\Modules\Tickets\Services\TicketCounterService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.app')]
 class CreateTicket extends Component
 {
+    use WithFileUploads;
+
     public string $subject = '';
     public string $description = '';
     public string $category_id = '';
     public string $subcategory_id = '';
+
+    /** @var array<int, \Livewire\Features\SupportFileUploads\TemporaryUploadedFile> */
+    public array $attachments = [];
 
     public Collection $subcategories;
 
@@ -38,18 +46,30 @@ class CreateTicket extends Component
 
     public function submit(): void
     {
-        $key   = 'ticket.create:' . auth()->id();
-        $max   = config('rate_limits.ticket_create.max_attempts', 10);
-        $decay = config('rate_limits.ticket_create.decay_seconds', 3600);
+        $user = auth()->user();
 
-        if (RateLimiter::tooManyAttempts($key, $max)) {
+        // Ticket create rate limit
+        $createKey   = 'ticket.create:' . $user->id;
+        $createMax   = config('rate_limits.ticket_create.max_attempts', 10);
+        $createDecay = config('rate_limits.ticket_create.decay_seconds', 3600);
+
+        if (RateLimiter::tooManyAttempts($createKey, $createMax)) {
             abort(429);
+        }
+
+        // Upload rate limit (pre-flight before ticket creation)
+        if (! empty($this->attachments)) {
+            $uploadKey   = 'upload:' . $user->id;
+            $uploadMax   = config('rate_limits.upload.max_attempts', 20);
+
+            if (RateLimiter::tooManyAttempts($uploadKey, $uploadMax)) {
+                abort(429);
+            }
         }
 
         $this->validate($this->rules());
 
-        $category = Category::find($this->category_id);
-
+        $category    = Category::find($this->category_id);
         $description = app(RichTextSanitizer::class)->sanitize($this->description);
         $displayNumber = app(TicketCounterService::class)->generate();
 
@@ -61,11 +81,25 @@ class CreateTicket extends Component
             'category_id'     => $category->id,
             'subcategory_id'  => $this->subcategory_id ?: null,
             'group_id'        => $category->group_id,
-            'requester_id'    => auth()->id(),
+            'requester_id'    => $user->id,
             'incident_origin' => 'web',
         ]);
 
-        RateLimiter::hit($key, $decay);
+        RateLimiter::hit($createKey, $createDecay);
+
+        TicketStatusChanged::dispatch($ticket, '', 'awaiting_assignment', $user);
+
+        if (! empty($this->attachments)) {
+            $uploadKey   = 'upload:' . $user->id;
+            $uploadDecay = config('rate_limits.upload.decay_seconds', 3600);
+            $uploadMax   = config('rate_limits.upload.max_attempts', 20);
+            $service     = app(FileUploadService::class);
+
+            foreach ($this->attachments as $file) {
+                $service->store($file, $ticket, $user);
+                RateLimiter::hit($uploadKey, $uploadDecay);
+            }
+        }
 
         $this->redirect(route('tickets.show', $ticket->id), navigate: true);
     }
@@ -73,9 +107,11 @@ class CreateTicket extends Component
     private function rules(): array
     {
         $rules = [
-            'subject'     => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'category_id' => ['required', 'exists:categories,id'],
+            'subject'       => ['required', 'string', 'max:255'],
+            'description'   => ['required', 'string'],
+            'category_id'   => ['required', 'exists:categories,id'],
+            'attachments'   => ['array', 'max:5'],
+            'attachments.*' => ['file'],
         ];
 
         $rules['subcategory_id'] = [
