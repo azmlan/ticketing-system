@@ -26,6 +26,7 @@ class User extends Authenticatable
         'location_id',
         'phone',
         'locale',
+        'preferences',
         'is_tech',
         'is_super_user',
     ];
@@ -39,9 +40,10 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_tech' => 'boolean',
-            'is_super_user' => 'boolean',
+            'password'          => 'hashed',
+            'preferences'       => 'array',
+            'is_tech'           => 'boolean',
+            'is_super_user'     => 'boolean',
         ];
     }
 
