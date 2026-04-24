@@ -6,7 +6,7 @@
 
 ## Tasks
 
-- [ ] **Task 7.1** — `csat_ratings` migration/model/factory with UNIQUE on `ticket_id`, `status` enum `pending/submitted/expired`, `expires_at` = resolved + 7 days; listener on `TicketStatusChanged` → resolved that creates the row; `csat:expire` scheduled daily command flipping expired rows; feature tests.
+- [x] **Task 7.1** — `csat_ratings` migration/model/factory with UNIQUE on `ticket_id`, `status` enum `pending/submitted/expired`, `expires_at` = resolved + 7 days; listener on `TicketStatusChanged` → resolved that creates the row; `csat:expire` scheduled daily command flipping expired rows; feature tests.
 - [ ] **Task 7.2** — CSAT flows: login-time modal/banner Livewire listing pending ratings (dismiss increments `dismissed_count`, submit saves rating 1-5 + comment); ticket detail view submission (any time); visibility rules per §12.1 (requester sees own, assigned tech sees rating + comment, IT Manager sees all, other techs see nothing); feature tests per role.
 - [ ] **Task 7.3** — Reports — Volume bundle: Ticket Volume, Tickets by Status, Tickets by Category, Tickets by Priority. Shared `ReportsController` + filter component (date range required + category + priority + group + tech + status) + `permission:system.view-reports` gating; data-table Livewire rendering; feature tests per report.
 - [ ] **Task 7.4** — Reports — Performance bundle: Avg Resolution Time, Tech Performance (resolved count + avg CSAT + SLA compliance), Team Workload (current open per tech), Escalation Summary (triggered/approved/rejected per period); feature tests per report.

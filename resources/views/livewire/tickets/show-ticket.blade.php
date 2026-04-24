@@ -227,6 +227,11 @@
         @endif
     @endcan
 
+    {{-- CSAT Rating --}}
+    @auth
+        @livewire('csat.rating-section', ['ticketId' => $ticket->id], key('csat-' . $ticket->id))
+    @endauth
+
     {{-- Comments --}}
     <div class="mt-8 border-t pt-6">
         @livewire('communication.add-comment', ['ticketUlid' => $ticket->id], key('comments-' . $ticket->id))

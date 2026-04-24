@@ -126,6 +126,9 @@
     </div>
 </div>
 
+@auth
+    @livewire('csat.prompt-modal')
+@endauth
 @livewireScripts
 </body>
 </html>
