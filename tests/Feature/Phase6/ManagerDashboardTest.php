@@ -250,7 +250,7 @@ it('team workload counts match assignments', function () {
     $component = Livewire::actingAs($manager)->test(ManagerDashboard::class);
     $workload  = $component->viewData('teamWorkload');
 
-    $byTech = collect($workload)->keyBy('id');
+    $byTech = $workload->getCollection()->keyBy('id');
 
     expect($byTech[$tech1->id]->open_count)->toBe(2)
         ->and($byTech[$tech2->id]->open_count)->toBe(1);
@@ -275,7 +275,7 @@ it('team workload is sorted by open count descending', function () {
 
 // ─── Recent activity ──────────────────────────────────────────────────────────
 
-it('recent activity contains system-wide tickets capped at 20', function () {
+it('recent activity shows all system-wide tickets paginated', function () {
     $manager   = makeManager();
     $requester = User::factory()->create();
     $this->actingAs($requester);
@@ -286,7 +286,7 @@ it('recent activity contains system-wide tickets capped at 20', function () {
 
     $component = Livewire::actingAs($manager)->test(ManagerDashboard::class);
 
-    expect($component->viewData('recentActivity'))->toHaveCount(20);
+    expect($component->viewData('recentActivity')->total())->toBe(25);
 });
 
 // ─── Localization ─────────────────────────────────────────────────────────────

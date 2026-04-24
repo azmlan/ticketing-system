@@ -136,7 +136,7 @@
                         <label class="inline-flex items-center gap-1 text-xs cursor-pointer">
                             <input type="checkbox" wire:model.live="filterPriority" value="{{ $p }}"
                                 class="rounded border-gray-300 text-blue-600" />
-                            {{ ucfirst($p) }}
+                            {{ __('tickets.priority.' . $p) }}
                         </label>
                     @endforeach
                 </div>
@@ -208,7 +208,7 @@
         <div>
             <h2 class="text-base font-semibold text-gray-800 mb-3">
                 {{ __('tickets.dashboard.tech.queue_title') }}
-                <span class="ms-1 text-sm font-normal text-gray-500">({{ $queueTickets->count() }})</span>
+                <span class="ms-1 text-sm font-normal text-gray-500">({{ $queueTickets->total() }})</span>
             </h2>
             <table class="w-full text-sm border-collapse">
                 <thead>
@@ -248,13 +248,14 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="mt-3">{{ $queueTickets->links() }}</div>
         </div>
 
         {{-- My Tickets --}}
         <div>
             <h2 class="text-base font-semibold text-gray-800 mb-3">
                 {{ __('tickets.dashboard.tech.my_tickets_title') }}
-                <span class="ms-1 text-sm font-normal text-gray-500">({{ $myTickets->count() }})</span>
+                <span class="ms-1 text-sm font-normal text-gray-500">({{ $myTickets->total() }})</span>
             </h2>
             <table class="w-full text-sm border-collapse">
                 <thead>
@@ -294,6 +295,7 @@
                     @endforelse
                 </tbody>
             </table>
+            <div class="mt-3">{{ $myTickets->links() }}</div>
         </div>
 
     </div>

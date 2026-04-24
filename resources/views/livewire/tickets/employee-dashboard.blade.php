@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    {{-- ── Filters ──────────────────────────────────────────────────────── --}}
+    {{-- ── Filters & Sort ───────────────────────────────────────────────── --}}
     <div class="mb-4 flex flex-wrap items-center gap-3">
         {{-- Status Tabs --}}
         <div class="flex flex-wrap gap-1">
@@ -58,6 +58,27 @@
                 placeholder="{{ __('tickets.dashboard.employee.search_placeholder') }}"
                 class="w-full border border-gray-300 rounded px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             />
+        </div>
+
+        {{-- Sort By --}}
+        <div class="flex items-center gap-2">
+            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">{{ __('tickets.dashboard.employee.sort_by') }}</label>
+            <select wire:model.live="sortBy"
+                class="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                <option value="created_at">{{ __('tickets.dashboard.employee.sort_created_at') }}</option>
+                <option value="priority">{{ __('tickets.dashboard.employee.sort_priority') }}</option>
+                <option value="updated_at">{{ __('tickets.dashboard.employee.sort_updated_at') }}</option>
+            </select>
+        </div>
+
+        {{-- Sort Direction --}}
+        <div class="flex items-center gap-2">
+            <label class="text-xs font-medium text-gray-600 whitespace-nowrap">{{ __('tickets.dashboard.employee.sort_dir') }}</label>
+            <select wire:model.live="sortDir"
+                class="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                <option value="desc">{{ __('tickets.dashboard.employee.sort_desc') }}</option>
+                <option value="asc">{{ __('tickets.dashboard.employee.sort_asc') }}</option>
+            </select>
         </div>
     </div>
 
@@ -104,4 +125,9 @@
             @endforelse
         </tbody>
     </table>
+
+    {{-- ── Pagination ───────────────────────────────────────────────────── --}}
+    <div class="mt-4">
+        {{ $tickets->links() }}
+    </div>
 </div>

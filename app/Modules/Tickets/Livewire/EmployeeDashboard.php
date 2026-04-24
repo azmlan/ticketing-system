@@ -6,14 +6,21 @@ use App\Modules\Tickets\Models\Ticket;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class EmployeeDashboard extends Component
 {
+    use WithPagination;
+
     public string $search = '';
+
     public string $statusFilter = '';
 
-    // Maps UI tab labels to actual ticket status values
+    public string $sortBy = 'created_at';
+
+    public string $sortDir = 'desc';
+
     private const OPEN_STATUSES = [
         'awaiting_assignment',
         'in_progress',
@@ -23,19 +30,33 @@ class EmployeeDashboard extends Component
         'awaiting_final_approval',
     ];
 
+    private const ALLOWED_SORTS = ['created_at', 'priority', 'updated_at'];
+
     public function updatedSearch(): void
     {
-        // keep reactive — no extra logic needed
+        $this->resetPage();
     }
 
     public function updatedStatusFilter(): void
     {
-        // keep reactive — no extra logic needed
+        $this->resetPage();
+    }
+
+    public function updatedSortBy(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedSortDir(): void
+    {
+        $this->resetPage();
     }
 
     public function render()
     {
-        $tickets = $this->buildTicketQuery()->with(['category'])->orderByDesc('created_at')->get();
+        $tickets = $this->buildTicketQuery()
+            ->with(['category'])
+            ->paginate(config('ticketing.dashboard.per_page', 25));
 
         $slaMap = DB::table('ticket_sla')
             ->whereIn('ticket_id', $tickets->pluck('id')->all())
@@ -59,18 +80,35 @@ class EmployeeDashboard extends Component
 
         // Subject-only search — LIKE is not FULLTEXT; CLAUDE.md invariant only forbids raw FULLTEXT
         if ($this->search !== '') {
-            $query->where('subject', 'LIKE', '%' . $this->search . '%');
+            $query->where('subject', 'LIKE', '%'.$this->search.'%');
         }
 
+        $this->applySort($query);
+
         return $query;
+    }
+
+    private function applySort($query): void
+    {
+        $col = in_array($this->sortBy, self::ALLOWED_SORTS, true) ? $this->sortBy : 'created_at';
+        $dir = in_array(strtolower($this->sortDir), ['asc', 'desc'], true) ? $this->sortDir : 'desc';
+
+        if ($col === 'priority') {
+            $order = $dir === 'desc' ? 'ASC' : 'DESC';
+            $query->orderByRaw("CASE priority
+                WHEN 'critical' THEN 0 WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3
+            END {$order}");
+        } else {
+            $query->orderBy($col, $dir);
+        }
     }
 
     private function computeCounts(): array
     {
         return [
-            'open'      => Ticket::query()->whereIn('status', self::OPEN_STATUSES)->count(),
-            'resolved'  => Ticket::query()->where('status', 'resolved')->count(),
-            'closed'    => Ticket::query()->where('status', 'closed')->count(),
+            'open' => Ticket::query()->whereIn('status', self::OPEN_STATUSES)->count(),
+            'resolved' => Ticket::query()->where('status', 'resolved')->count(),
+            'closed' => Ticket::query()->where('status', 'closed')->count(),
             'cancelled' => Ticket::query()->where('status', 'cancelled')->count(),
         ];
     }

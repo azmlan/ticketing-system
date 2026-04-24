@@ -89,6 +89,13 @@ return [
         ],
     ],
 
+    'priority' => [
+        'critical' => 'Critical',
+        'high'     => 'High',
+        'medium'   => 'Medium',
+        'low'      => 'Low',
+    ],
+
     'dashboard' => [
         'tech' => [
             'title'                    => 'Tech Dashboard',
@@ -135,6 +142,14 @@ return [
             'filter_resolved'    => 'Resolved',
             'filter_closed'      => 'Closed',
             'filter_cancelled'   => 'Cancelled',
+            'sort_by'            => 'Sort By',
+            'sort_default'       => 'Default',
+            'sort_created_at'    => 'Date Created',
+            'sort_priority'      => 'Priority',
+            'sort_updated_at'    => 'Last Updated',
+            'sort_dir'           => 'Direction',
+            'sort_desc'          => 'Descending',
+            'sort_asc'           => 'Ascending',
         ],
         'manager' => [
             'title'                   => 'IT Manager Dashboard',
@@ -167,6 +182,14 @@ return [
             'no_workload'             => 'No open tickets assigned.',
             'activity_title'          => 'Recent Activity',
             'no_activity'             => 'No recent activity.',
+            'sort_by'                 => 'Sort By',
+            'sort_default'            => 'Default',
+            'sort_created_at'         => 'Date Created',
+            'sort_priority'           => 'Priority',
+            'sort_updated_at'         => 'Last Updated',
+            'sort_dir'                => 'Direction',
+            'sort_desc'               => 'Descending',
+            'sort_asc'                => 'Ascending',
         ],
     ],
 

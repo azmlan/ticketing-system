@@ -89,6 +89,13 @@ return [
         ],
     ],
 
+    'priority' => [
+        'critical' => 'حرجة',
+        'high'     => 'عالية',
+        'medium'   => 'متوسطة',
+        'low'      => 'منخفضة',
+    ],
+
     'dashboard' => [
         'tech' => [
             'title'                    => 'لوحة تحكم الفني',
@@ -135,6 +142,14 @@ return [
             'filter_resolved'    => 'محلولة',
             'filter_closed'      => 'مغلقة',
             'filter_cancelled'   => 'ملغاة',
+            'sort_by'            => 'ترتيب بحسب',
+            'sort_default'       => 'الافتراضي',
+            'sort_created_at'    => 'تاريخ الإنشاء',
+            'sort_priority'      => 'الأولوية',
+            'sort_updated_at'    => 'آخر تحديث',
+            'sort_dir'           => 'الاتجاه',
+            'sort_desc'          => 'تنازلي',
+            'sort_asc'           => 'تصاعدي',
         ],
         'manager' => [
             'title'                   => 'لوحة تحكم مدير تقنية المعلومات',
@@ -167,6 +182,14 @@ return [
             'no_workload'             => 'لا توجد تذاكر مفتوحة مسندة.',
             'activity_title'          => 'النشاط الأخير',
             'no_activity'             => 'لا يوجد نشاط حديث.',
+            'sort_by'                 => 'ترتيب بحسب',
+            'sort_default'            => 'الافتراضي',
+            'sort_created_at'         => 'تاريخ الإنشاء',
+            'sort_priority'           => 'الأولوية',
+            'sort_updated_at'         => 'آخر تحديث',
+            'sort_dir'                => 'الاتجاه',
+            'sort_desc'               => 'تنازلي',
+            'sort_asc'                => 'تصاعدي',
         ],
     ],
 

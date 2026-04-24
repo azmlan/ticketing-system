@@ -2,16 +2,25 @@
 
 namespace App\Modules\Tickets\Livewire;
 
-use App\Modules\Admin\Models\Category;
-use App\Modules\Shared\Models\User;
-use App\Modules\Tickets\Models\Ticket;
+use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class ManagerDashboard extends Component
 {
+    use WithPagination;
+
+    public string $sortBy = 'updated_at';
+
+    public string $sortDir = 'desc';
+
+    private const ALLOWED_SORTS = ['created_at', 'priority', 'updated_at'];
+
     public function mount(): void
     {
         $user = auth()->user();
@@ -21,21 +30,31 @@ class ManagerDashboard extends Component
         );
     }
 
+    public function updatedSortBy(): void
+    {
+        $this->resetPage('activityPage');
+    }
+
+    public function updatedSortDir(): void
+    {
+        $this->resetPage('activityPage');
+    }
+
     public function render()
     {
         return view('livewire.tickets.manager-dashboard', [
-            'statusCounts'     => $this->computeStatusCounts(),
-            'categoryCounts'   => $this->computeCategoryCounts(),
-            'createdWeek'      => $this->countCreatedSince(now()->startOfWeek()),
-            'createdMonth'     => $this->countCreatedSince(now()->startOfMonth()),
+            'statusCounts' => $this->computeStatusCounts(),
+            'categoryCounts' => $this->computeCategoryCounts(),
+            'createdWeek' => $this->countCreatedSince(now()->startOfWeek()),
+            'createdMonth' => $this->countCreatedSince(now()->startOfMonth()),
             'avgResolutionHrs' => $this->computeAvgResolutionHours(),
-            'slaCompliance'    => $this->computeSlaCompliance(),
-            'breachedCount'    => $this->countBreached(),
-            'breachedTickets'  => $this->fetchBreachedTickets(),
-            'escalationQueue'  => $this->fetchEscalationQueue(),
-            'unassignedCount'  => $this->countUnassigned(),
-            'teamWorkload'     => $this->fetchTeamWorkload(),
-            'recentActivity'   => $this->fetchRecentActivity(),
+            'slaCompliance' => $this->computeSlaCompliance(),
+            'breachedCount' => $this->countBreached(),
+            'breachedTickets' => $this->fetchBreachedTickets(),
+            'escalationQueue' => $this->fetchEscalationQueue(),
+            'unassignedCount' => $this->countUnassigned(),
+            'teamWorkload' => $this->fetchTeamWorkload(),
+            'recentActivity' => $this->fetchRecentActivity(),
         ]);
     }
 
@@ -59,7 +78,7 @@ class ManagerDashboard extends Component
         return $rows + array_fill_keys($statuses, 0);
     }
 
-    private function computeCategoryCounts(): \Illuminate\Support\Collection
+    private function computeCategoryCounts(): Collection
     {
         return DB::table('tickets')
             ->join('categories', 'tickets.category_id', '=', 'categories.id')
@@ -70,7 +89,7 @@ class ManagerDashboard extends Component
             ->get();
     }
 
-    private function countCreatedSince(\Carbon\Carbon $since): int
+    private function countCreatedSince(Carbon $since): int
     {
         return DB::table('tickets')
             ->whereNull('deleted_at')
@@ -124,7 +143,7 @@ class ManagerDashboard extends Component
             ->count();
     }
 
-    private function fetchBreachedTickets(): \Illuminate\Support\Collection
+    private function fetchBreachedTickets(): LengthAwarePaginator
     {
         return DB::table('ticket_sla')
             ->join('tickets', 'ticket_sla.ticket_id', '=', 'tickets.id')
@@ -141,12 +160,12 @@ class ManagerDashboard extends Component
                 DB::raw('ROUND(ticket_sla.resolution_elapsed_minutes / 60, 1) as overdue_hours'),
             )
             ->orderByDesc('ticket_sla.resolution_elapsed_minutes')
-            ->get();
+            ->paginate(config('ticketing.dashboard.per_page', 25), ['*'], 'breachedPage');
     }
 
     // ── Escalation queue ──────────────────────────────────────────────────────
 
-    private function fetchEscalationQueue(): \Illuminate\Support\Collection
+    private function fetchEscalationQueue(): Collection
     {
         return DB::table('tickets')
             ->whereNull('deleted_at')
@@ -169,7 +188,7 @@ class ManagerDashboard extends Component
 
     // ── Team workload ─────────────────────────────────────────────────────────
 
-    private function fetchTeamWorkload(): \Illuminate\Support\Collection
+    private function fetchTeamWorkload(): LengthAwarePaginator
     {
         $openStatuses = [
             'awaiting_assignment', 'in_progress', 'on_hold',
@@ -184,16 +203,17 @@ class ManagerDashboard extends Component
             ->select('users.id', 'users.full_name', DB::raw('COUNT(*) as open_count'))
             ->groupBy('users.id', 'users.full_name')
             ->orderByDesc('open_count')
-            ->get();
+            ->paginate(config('ticketing.dashboard.per_page', 25), ['*'], 'workloadPage');
     }
 
     // ── Recent activity feed ──────────────────────────────────────────────────
 
-    private function fetchRecentActivity(): \Illuminate\Support\Collection
+    private function fetchRecentActivity(): LengthAwarePaginator
     {
-        // Proxy for audit feed until Phase 10 audit_logs table is built:
-        // show the 20 most recently updated tickets system-wide.
-        return DB::table('tickets')
+        $col = in_array($this->sortBy, self::ALLOWED_SORTS, true) ? $this->sortBy : 'updated_at';
+        $dir = in_array(strtolower($this->sortDir), ['asc', 'desc'], true) ? $this->sortDir : 'desc';
+
+        $query = DB::table('tickets')
             ->leftJoin('users as requester', 'tickets.requester_id', '=', 'requester.id')
             ->leftJoin('users as tech', 'tickets.assigned_to', '=', 'tech.id')
             ->whereNull('tickets.deleted_at')
@@ -202,12 +222,22 @@ class ManagerDashboard extends Component
                 'tickets.display_number',
                 'tickets.subject',
                 'tickets.status',
+                'tickets.priority',
                 'tickets.updated_at',
+                'tickets.created_at',
                 'requester.full_name as requester_name',
                 'tech.full_name as tech_name',
-            )
-            ->orderByDesc('tickets.updated_at')
-            ->limit(20)
-            ->get();
+            );
+
+        if ($col === 'priority') {
+            $order = $dir === 'desc' ? 'ASC' : 'DESC';
+            $query->orderByRaw("CASE tickets.priority
+                WHEN 'critical' THEN 0 WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3
+            END {$order}");
+        } else {
+            $query->orderBy("tickets.{$col}", $dir);
+        }
+
+        return $query->paginate(config('ticketing.dashboard.per_page', 25), ['*'], 'activityPage');
     }
 }

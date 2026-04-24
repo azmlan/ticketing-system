@@ -13,23 +13,35 @@ use App\Modules\Tickets\Models\TransferRequest;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('layouts.app')]
 class TechDashboard extends Component
 {
+    use WithPagination;
+
     // ── Filter bar ────────────────────────────────────────────────────────────
-    public array  $filterStatus    = [];
-    public array  $filterPriority  = [];
-    public string $filterCategory  = '';
+    public array $filterStatus = [];
+
+    public array $filterPriority = [];
+
+    public string $filterCategory = '';
+
     public string $filterSubcategory = '';
-    public array  $filterGroups    = [];   // persisted to users.preferences
+
+    public array $filterGroups = [];   // persisted to users.preferences
+
     public string $filterAssignedTo = '';  // '' = any, 'unassigned' = NULL, or a user ULID
-    public string $dateFrom        = '';
-    public string $dateTo          = '';
-    public string $search          = '';
+
+    public string $dateFrom = '';
+
+    public string $dateTo = '';
+
+    public string $search = '';
 
     // Sort — empty string means "use panel-default" (SLA for my-tickets, priority for queue)
-    public string $sortBy  = '';
+    public string $sortBy = '';
+
     public string $sortDir = 'desc';
 
     private const OPEN_STATUSES = [
@@ -62,11 +74,29 @@ class TechDashboard extends Component
         $prefs = $user->preferences ?? [];
         data_set($prefs, 'tech_dashboard.groups', $this->filterGroups);
         $user->update(['preferences' => $prefs]);
+        $this->resetPage('queuePage');
+        $this->resetPage('myPage');
     }
 
     public function updatedFilterCategory(): void
     {
         $this->filterSubcategory = '';
+        $this->resetPage('queuePage');
+        $this->resetPage('myPage');
+    }
+
+    public function updated(string $property): void
+    {
+        $filterProps = ['search', 'sortBy', 'sortDir', 'dateFrom', 'dateTo', 'filterAssignedTo', 'filterSubcategory'];
+        $arrayPrefixes = ['filterStatus', 'filterPriority'];
+
+        $isFilter = in_array($property, $filterProps, true)
+            || array_reduce($arrayPrefixes, fn ($carry, $prefix) => $carry || str_starts_with($property, $prefix), false);
+
+        if ($isFilter) {
+            $this->resetPage('queuePage');
+            $this->resetPage('myPage');
+        }
     }
 
     public function acceptTransfer(string $transferId): void
@@ -83,13 +113,14 @@ class TechDashboard extends Component
 
     public function render()
     {
-        $user     = auth()->user();
+        $user = auth()->user();
         $groupIds = DB::table('group_user')->where('user_id', $user->id)->pluck('group_id')->all();
 
         $searchIds = $this->resolveSearchIds();
 
-        $queueTickets = $this->buildQueueQuery($groupIds, $searchIds)->with(['category'])->get();
-        $myTickets    = $this->buildMyTicketsQuery($user->id, $searchIds)->with(['category'])->get();
+        $perPage = config('ticketing.dashboard.per_page', 25);
+        $queueTickets = $this->buildQueueQuery($groupIds, $searchIds)->with(['category'])->paginate($perPage, pageName: 'queuePage');
+        $myTickets = $this->buildMyTicketsQuery($user->id, $searchIds)->with(['category'])->paginate($perPage, pageName: 'myPage');
 
         $allIds = $queueTickets->pluck('id')->merge($myTickets->pluck('id'))->unique()->all();
         $slaMap = DB::table('ticket_sla')
@@ -105,12 +136,12 @@ class TechDashboard extends Component
         $stats = $this->computeStats($user->id);
 
         // Dropdown data
-        $categories    = Category::where('is_active', true)->orderBy('name_en')->get();
+        $categories = Category::where('is_active', true)->orderBy('name_en')->get();
         $subcategories = $this->filterCategory !== ''
             ? Subcategory::where('category_id', $this->filterCategory)->where('is_active', true)->orderBy('name_en')->get()
             : collect();
         $techUsers = User::where('is_tech', true)->orderBy('full_name')->get();
-        $groups    = Group::where('is_active', true)->orderBy('name_en')->get();
+        $groups = Group::where('is_active', true)->orderBy('name_en')->get();
 
         return view('livewire.tickets.tech-dashboard', compact(
             'queueTickets', 'myTickets', 'slaMap', 'pendingTransfers', 'stats',
@@ -163,17 +194,17 @@ class TechDashboard extends Component
         if ($this->sortBy === '') {
             // Default: SLA urgency → priority → date (task 6.3 behaviour)
             $query->leftJoin('ticket_sla', 'tickets.id', '=', 'ticket_sla.ticket_id')
-                  ->select('tickets.*')
-                  ->orderByRaw("CASE
+                ->select('tickets.*')
+                ->orderByRaw("CASE
                       WHEN ticket_sla.resolution_status = 'breached' OR ticket_sla.response_status = 'breached' THEN 0
                       WHEN ticket_sla.resolution_status = 'warning' OR ticket_sla.response_status = 'warning' THEN 1
                       WHEN ticket_sla.resolution_status IS NOT NULL THEN 2
                       ELSE 3
                   END")
-                  ->orderByRaw("CASE priority
+                ->orderByRaw("CASE priority
                       WHEN 'critical' THEN 0 WHEN 'high' THEN 1 WHEN 'medium' THEN 2 ELSE 3
                   END")
-                  ->orderBy('tickets.created_at');
+                ->orderBy('tickets.created_at');
         } else {
             $this->applySort($query, defaultPrioritySort: false);
         }
@@ -245,6 +276,7 @@ class TechDashboard extends Component
         if (empty($this->filterGroups)) {
             return $techGroupIds;
         }
+
         return array_values(array_intersect($techGroupIds, $this->filterGroups));
     }
 
@@ -311,8 +343,8 @@ class TechDashboard extends Component
             ->count();
 
         return [
-            'open'           => $open,
-            'resolved_week'  => $resolvedWeek,
+            'open' => $open,
+            'resolved_week' => $resolvedWeek,
             'resolved_month' => $resolvedMonth,
             'sla_compliance' => $closedTotal > 0 ? (int) round(($compliant / $closedTotal) * 100) : 0,
         ];

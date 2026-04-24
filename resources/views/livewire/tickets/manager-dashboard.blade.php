@@ -112,6 +112,7 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">{{ $breachedTickets->links() }}</div>
         @endif
     </section>
 
@@ -168,12 +169,30 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">{{ $teamWorkload->links() }}</div>
         @endif
     </section>
 
     {{-- ── Recent Activity ──────────────────────────────────────────────────── --}}
     <section>
-        <h2 class="text-lg font-semibold mb-3">{{ __('tickets.dashboard.manager.activity_title') }}</h2>
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+            <h2 class="text-lg font-semibold">{{ __('tickets.dashboard.manager.activity_title') }}</h2>
+            <div class="flex items-center gap-2">
+                <label class="text-xs font-medium text-gray-600 whitespace-nowrap">{{ __('tickets.dashboard.manager.sort_by') }}</label>
+                <select wire:model.live="sortBy"
+                    class="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                    <option value="updated_at">{{ __('tickets.dashboard.manager.sort_updated_at') }}</option>
+                    <option value="created_at">{{ __('tickets.dashboard.manager.sort_created_at') }}</option>
+                    <option value="priority">{{ __('tickets.dashboard.manager.sort_priority') }}</option>
+                </select>
+                <label class="text-xs font-medium text-gray-600 whitespace-nowrap">{{ __('tickets.dashboard.manager.sort_dir') }}</label>
+                <select wire:model.live="sortDir"
+                    class="border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+                    <option value="desc">{{ __('tickets.dashboard.manager.sort_desc') }}</option>
+                    <option value="asc">{{ __('tickets.dashboard.manager.sort_asc') }}</option>
+                </select>
+            </div>
+        </div>
         @if ($recentActivity->isEmpty())
             <p class="text-sm text-gray-500">{{ __('tickets.dashboard.manager.no_activity') }}</p>
         @else
@@ -203,6 +222,7 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="mt-3">{{ $recentActivity->links() }}</div>
         @endif
     </section>
 </div>
