@@ -12,6 +12,19 @@
         @if ($ticket->group)
             <p>{{ __('tickets.show.group') }}: {{ $ticket->group->localizedName() }}</p>
         @endif
+
+        {{-- SLA Indicator --}}
+        @if ($ticketSla)
+            <div class="mt-3 flex flex-wrap gap-2 items-center">
+                <span class="text-sm text-gray-500 font-medium">{{ __('sla.indicator.title') }}:</span>
+                <x-sla-status-badge :status="$ticketSla->response_status" type="response" />
+                <x-sla-status-badge :status="$ticketSla->resolution_status" type="resolution" />
+            </div>
+        @else
+            <div class="mt-3">
+                <span class="text-sm text-gray-400">{{ __('sla.indicator.no_policy') }}</span>
+            </div>
+        @endif
     </div>
 
     <div class="prose max-w-none mb-6">
