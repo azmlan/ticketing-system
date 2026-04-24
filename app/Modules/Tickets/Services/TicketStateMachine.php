@@ -57,7 +57,9 @@ class TicketStateMachine
 
     private function assertCanClose(string $from, string $to, User $actor): void
     {
-        if (! ($actor->is_super_user || $actor->hasPermission('ticket.close'))) {
+        if (! ($actor->is_super_user
+            || $actor->hasPermission('ticket.close')
+            || $actor->hasPermission('escalation.approve'))) {
             throw new InvalidTicketTransitionException($from, $to, 'requires ticket.close permission');
         }
     }

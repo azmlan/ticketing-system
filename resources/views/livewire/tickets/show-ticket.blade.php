@@ -174,12 +174,18 @@
         @endif
     @endcan
 
-    {{-- Maintenance Request Downloads (action_required) --}}
-    @if ($ticket->status->value === 'action_required')
+    {{-- Requester: upload signed maintenance request (action_required) --}}
+    @if ($ticket->status->value === 'action_required' && auth()->id() === $ticket->requester_id)
+        <div class="mt-8 border-t pt-6">
+            @livewire('escalation.upload-signed-maintenance-request', ['ticketId' => $ticket->id], key('upload-signed-' . $ticket->id))
+        </div>
+    @endif
+
+    {{-- Tech / approver: download buttons only (action_required, not requester) --}}
+    @if ($ticket->status->value === 'action_required' && auth()->id() !== $ticket->requester_id)
         @auth
             @php
-                $canDownload = auth()->id() === $ticket->requester_id
-                    || auth()->id() === $ticket->assigned_to
+                $canDownload = auth()->id() === $ticket->assigned_to
                     || auth()->user()->is_super_user
                     || auth()->user()->hasPermission('escalation.approve');
             @endphp
@@ -198,4 +204,13 @@
             @endif
         @endauth
     @endif
+
+    {{-- Approver: final review (awaiting_final_approval) --}}
+    @can('escalation.approve')
+        @if ($ticket->status->value === 'awaiting_final_approval')
+            <div class="mt-8 border-t pt-6">
+                @livewire('escalation.review-signed-maintenance-request', ['ticketId' => $ticket->id], key('review-signed-' . $ticket->id))
+            </div>
+        @endif
+    @endcan
 </div>

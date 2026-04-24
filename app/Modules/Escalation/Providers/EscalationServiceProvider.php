@@ -4,7 +4,9 @@ namespace App\Modules\Escalation\Providers;
 
 use App\Modules\Escalation\Listeners\GenerateMaintenanceRequestOnActionRequired;
 use App\Modules\Escalation\Livewire\ReviewConditionReport;
+use App\Modules\Escalation\Livewire\ReviewSignedMaintenanceRequest;
 use App\Modules\Escalation\Livewire\SubmitConditionReport;
+use App\Modules\Escalation\Livewire\UploadSignedMaintenanceRequest;
 use App\Modules\Tickets\Events\TicketStatusChanged;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
@@ -17,6 +19,8 @@ class EscalationServiceProvider extends ServiceProvider
     {
         Livewire::component('escalation.submit-condition-report', SubmitConditionReport::class);
         Livewire::component('escalation.review-condition-report', ReviewConditionReport::class);
+        Livewire::component('escalation.upload-signed-maintenance-request', UploadSignedMaintenanceRequest::class);
+        Livewire::component('escalation.review-signed-maintenance-request', ReviewSignedMaintenanceRequest::class);
 
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
