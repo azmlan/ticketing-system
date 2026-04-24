@@ -2,12 +2,14 @@
 
 namespace App\Modules\Communication\Providers;
 
+use App\Modules\Communication\Livewire\AddComment;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class CommunicationServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        // Routes and event listeners added in tasks 4.2–4.4
+        Livewire::component('communication.add-comment', AddComment::class);
     }
 }

@@ -213,4 +213,9 @@
             </div>
         @endif
     @endcan
+
+    {{-- Comments --}}
+    <div class="mt-8 border-t pt-6">
+        @livewire('communication.add-comment', ['ticketUlid' => $ticket->id], key('comments-' . $ticket->id))
+    </div>
 </div>
