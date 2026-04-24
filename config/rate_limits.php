@@ -13,4 +13,16 @@ return [
         'max_attempts' => 3,
         'decay_seconds' => 3600,
     ],
+    'ticket_create' => [
+        'max_attempts' => 10,
+        'decay_seconds' => 3600,
+    ],
+    'upload' => [
+        'max_attempts' => 20,
+        'decay_seconds' => 3600,
+    ],
+    'comment_create' => [
+        'max_attempts' => 30,
+        'decay_seconds' => 3600,
+    ],
 ];

@@ -1,93 +1,141 @@
-# Session Context — Ticketing System Phase 1
+# Session Context — Ticketing System Phase 3 → Phase 4
 
-## Branch
-`feature/phase-1-task-1-1-bootstrap` (all phase-1 tasks commit here)
+## Branch convention
+`feature/phase-N-task-X.Y-short-name` per task
 
 ## Docker command prefix
 ```bash
-docker compose -f /Users/abdulaziz/projects/ticketing-system/docker-compose.yml exec app
+docker compose exec app php artisan ...
 ```
-Example: `... exec app php artisan test`
 
 ## Completed tasks
-- ✅ 1.1 — Docker + Laravel 12 bootstrap, Pest, Horizon, Sanctum, module scaffold
-- ✅ 1.2 — users, departments, locations migrations + models + factories + tests
-- ✅ 1.3 — permissions, permission_user, tech_profiles migrations + models + PermissionSeeder + tests
-- ✅ 1.4 — AuthProviderInterface + EmailPasswordAuthProvider + Livewire auth flows + Redis rate limits + password policy + tests/Feature/Auth/
-- ✅ 1.5 — Profile edit + SetLocaleMiddleware + AR/EN translation scaffolds + tests/Feature/Profile/
 
-## Key file locations
+### Phase 1 (all done — see git log)
+
+### Phase 2 (all done — see git log)
+
+### Phase 3 (ALL DONE ✅)
+
+- ✅ **3.1 (task file)** — condition_reports, condition_report_attachments, maintenance_requests migrations; schema tests
+- ✅ **3.2 (task file)** — ConditionReport, ConditionReportAttachment, MaintenanceRequest models + factories; EscalationServiceProvider
+- ✅ **3.3 (task file)** — SubmitConditionReport Livewire + ConditionReportService + ConditionReportFileService + Location model
+- ✅ **3.4 (task file)** — ReviewConditionReport Livewire + ConditionReportApprovalService + ConditionReportAttachmentController + serve route
+- ✅ **3.5 (task file)** — MaintenanceRequestService (phpoffice/phpword DOCX generation, AR RTL + EN LTR), GenerateMaintenanceRequestDocxJob, GenerateMaintenanceRequestOnActionRequired listener, MaintenanceRequestController (download route); migration making generated_file_path + generated_locale nullable
+- ✅ **3.6 (task file)** — UploadSignedMaintenanceRequest Livewire (requester PDF/DOCX upload, magic-bytes, action_required → awaiting_final_approval) + ReviewSignedMaintenanceRequest Livewire (approve → resolved, reject-resubmit → action_required + rejection_count++, reject-permanently → closed) + SignedDocumentController (serve route) + MaintenanceRequestApprovalService + SignedMaintenanceRequestService; TicketStateMachine updated to allow escalation.approve to close tickets
+
+> **Note on task file vs phase-3.md numbering**: task files 3.1–3.5 map to phase-3.md tasks 3.1–3.3. Task file 3.6 covers phase-3.md tasks 3.4 (requester upload) + 3.5 (final approval).
+
+### Phase 4 (IN PROGRESS)
+
+- ✅ **4.1 (phase-4.md task 4.1)** — comments + notification_logs + response_templates migrations; Comment/NotificationLog/ResponseTemplate models + factories; InternalCommentScope (global scope enforcing is_internal=false for employees at query level, queue-safe); CommunicationServiceProvider registered
+- ✅ **4.2 (phase-4.md task 4.2)** — AddComment Livewire (communication.add-comment); internal/public toggle (default internal); server-side 403 if employee attempts is_internal=true; response-template pre-fill via updatedSelectedTemplate hook; rate limit 30/hr (comment.create:{userId}); CommentCreated event; body sanitized via RichTextSanitizer; InternalCommentScope enforces visibility at query level; integrated into show-ticket.blade.php
+
+## Key file locations (phase 3)
+
 ```
-app/Modules/Shared/Models/
-  User.php          ← Authenticatable, HasUlids, SoftDeletes
-  Department.php
-  Location.php
-  Permission.php
-  TechProfile.php
-
-app/Modules/Shared/Middleware/
-  SetLocaleMiddleware.php  ← reads user.locale, shares $dir/$lang via View::share()
-
-app/Modules/Auth/
-  Contracts/AuthProviderInterface.php
-  Providers/EmailPasswordAuthProvider.php
-  Providers/AuthServiceProvider.php   ← bound to bootstrap/providers.php; uses Route::middleware('web')
-  Livewire/Register.php
-  Livewire/Login.php
-  Livewire/PasswordResetRequest.php
-  Livewire/PasswordReset.php
-  Livewire/Profile.php
-  Routes/web.php  ← /register /login /password/reset /profile /logout; all wrapped in web middleware
-
 database/migrations/
-  2026_04_20_000001_create_departments_table.php
-  2026_04_20_000002_create_locations_table.php
-  2026_04_20_000003_create_users_table.php
-  2026_04_20_000004_create_permissions_table.php
-  2026_04_20_000005_create_permission_user_table.php
-  2026_04_20_000006_create_tech_profiles_table.php
+  2026_04_22_000001_create_condition_reports_table.php
+  2026_04_22_000002_create_condition_report_attachments_table.php
+  2026_04_22_000003_create_maintenance_requests_table.php
+  2026_04_22_000004_make_maintenance_request_generated_file_path_nullable.php
 
-config/permissions.php   ← 19 permission keys, source of truth
-config/role_bundles.php  ← technician / group_manager / it_manager arrays
-config/rate_limits.php   ← login/register/password_reset limits
+app/Modules/Escalation/
+  Models/ConditionReport.php
+  Models/ConditionReportAttachment.php
+  Models/MaintenanceRequest.php
+  Services/ConditionReportService.php
+  Services/ConditionReportFileService.php
+  Services/ConditionReportApprovalService.php
+  Services/MaintenanceRequestService.php          ← phpword DOCX generation
+  Services/SignedMaintenanceRequestService.php    ← requester PDF/DOCX upload
+  Services/MaintenanceRequestApprovalService.php ← approve/reject-resubmit/reject-permanently
+  Jobs/GenerateMaintenanceRequestDocxJob.php
+  Listeners/GenerateMaintenanceRequestOnActionRequired.php
+  Controllers/ConditionReportAttachmentController.php
+  Controllers/MaintenanceRequestController.php    ← download route
+  Controllers/SignedDocumentController.php        ← signed doc serve route
+  Livewire/SubmitConditionReport.php
+  Livewire/ReviewConditionReport.php
+  Livewire/UploadSignedMaintenanceRequest.php
+  Livewire/ReviewSignedMaintenanceRequest.php
+  Providers/EscalationServiceProvider.php
+  Routes/web.php
 
-database/seeders/PermissionSeeder.php  ← idempotent upsert by key
+resources/views/livewire/escalation/
+  submit-condition-report.blade.php
+  review-condition-report.blade.php
+  upload-signed-maintenance-request.blade.php
+  review-signed-maintenance-request.blade.php
 
-resources/lang/{ar,en}/
-  auth.php / profile.php / common.php / validation.php  ← full key parity, both locales
+resources/views/livewire/tickets/show-ticket.blade.php
 
-resources/views/
-  layouts/guest.blade.php   ← uses $dir/$lang from View::share
-  layouts/app.blade.php     ← uses $dir/$lang from View::share
-  livewire/auth/{register,login,password-reset-request,password-reset,profile}.blade.php
+resources/lang/{ar,en}/escalation.php
 
-tests/
-  Pest.php  ← RefreshDatabase in Feature/Schema, Feature/Auth, Feature/Profile
-  TestCase.php  ← withoutVite() in setUp()
-  Feature/Schema/   ← 38 schema tests
-  Feature/Auth/     ← 21 auth tests (ContainerTest, LoginTest, PasswordResetTest, RegistrationTest)
-  Feature/Profile/  ← 17 profile/locale/translation-parity tests
+tests/Feature/Phase3/
+  MigrationStructureTest.php           ← 10 pass / 10 MySQL-only skipped
+  ConditionReportSubmissionTest.php    ← 11 tests
+  ConditionReportApprovalTest.php      ← 16 tests
+  MaintenanceRequestGenerationTest.php ← 12 tests
+  FinalApprovalTest.php               ← 22 tests
+
+tests/Unit/Phase3/
+  EscalationModelsTest.php             ← 18 tests
+  MaintenanceRequestServiceTest.php    ← 8 tests
 ```
 
-## Critical SPEC-over-task-file overrides (apply to all future tasks)
-- Users have `full_name` (not `name_ar`/`name_en`) and `phone` (not `mobile`)
-- `users.department_id` / `users.location_id` → ON DELETE SET NULL (not RESTRICT)
-- `permissions` table column is `group_key` (not `group` — reserved word)
-- `permission_user` has no separate ULID PK; composite PK (user_id, permission_id)
-- `tech_profiles.promoted_by` → ON DELETE RESTRICT, NOT NULL (per SPEC §6.2)
-- No SoftDeletes on tech_profiles or permissions (SPEC §2.3 "Tables that use NEITHER")
+## Key file locations (phase 4, so far)
+
+```
+database/migrations/
+  2026_04_23_000001_create_comments_table.php         ← FULLTEXT guarded for SQLite
+  2026_04_23_000002_create_notification_logs_table.php
+  2026_04_23_000003_create_response_templates_table.php
+
+app/Modules/Communication/
+  Events/CommentCreated.php                           ← ticketId, commentId, isInternal
+  Livewire/AddComment.php                             ← comment form + timeline
+  Models/Comment.php                                  ← InternalCommentScope global scope
+  Models/NotificationLog.php
+  Models/ResponseTemplate.php                         ← SoftDeletes + active() local scope
+  Models/Scopes/InternalCommentScope.php
+  Providers/CommunicationServiceProvider.php          ← registers communication.add-comment
+
+database/factories/
+  CommentFactory.php           ← public()/internal() states
+  NotificationLogFactory.php   ← sent()/failed() states
+  ResponseTemplateFactory.php  ← public()/inactive() states
+
+resources/views/livewire/communication/
+  add-comment.blade.php        ← timeline + form; internal badge; RTL-safe
+
+resources/lang/{ar,en}/communication.php
+
+tests/Feature/Phase4/
+  MigrationStructureTest.php   ← 19 pass / 12 MySQL-only skipped
+  CommentsTest.php             ← 15 tests
+
+tests/Unit/Phase4/
+  CommunicationModelsTest.php  ← 22 tests (scope leak tests, factory states, SoftDeletes)
+```
+
+## Test count (after phase-4 task 4.2)
+**401 passed, 27 skipped (MySQL-only schema checks), 0 failed**
++15 new tests from Phase 4 Task 4.2.
 
 ## Infrastructure notes
-- Laravel 12 uses `bootstrap/app.php` (NOT app/Http/Kernel.php) for middleware registration
-- Module routes loaded via `Route::middleware('web')->group(...)` in service provider (NOT loadRoutesFrom) to pick up full web stack (session, CSRF, SetLocaleMiddleware)
-- CSRF is NOT auto-disabled in tests for these routes — POST tests must provide matching `_token` in session + request body, e.g.: `$this->withSession(['_token' => 'x'])->post(url, ['_token' => 'x'])`
-- `withoutVite()` is called globally in `TestCase::setUp()` to allow full-page rendering tests
-- `bootstrap/providers.php` registers: AppServiceProvider, HorizonServiceProvider, AuthServiceProvider
+- `phpoffice/phpword ^1.4` installed — generates DOCX via PHP temp file → Storage::disk('local')->put()
+- Download routes: `GET /escalation/tickets/{ticketId}/maintenance-request/download/{locale}`
+- Signed serve route: `GET /escalation/maintenance-requests/{maintenanceRequest}/signed`
+- `generated_file_path` and `generated_locale` are now nullable (pre-job creation state)
+- Listener guards against duplicate records on reject-resubmit (whereExists check; job still fires for fresh DOCX)
+- `app_settings` table not yet created (Phase 8); getAppSetting() wraps in try-catch → returns null gracefully
+- DOCX bidi/RTL via paragraph `['alignment' => 'right', 'bidi' => true]` + font `['rtl' => true]`
+- TicketStateMachine::assertCanClose now allows escalation.approve in addition to ticket.close and is_super_user
+- Livewire Testing\File: use tmpfile() resource (not string path) as second constructor arg; for magic-bytes content write to resource before passing
+- InternalCommentScope: wraps with auth()->check() guard so queue/CLI contexts (no user) see all comments unfiltered
 
-## Test count so far
-77 tests, 194 assertions — all passing
-
-## Next task
-**Task 1.6** — docs/tasks/phase-1/task-1-6.md
-Permission middleware + Blade directives (@permission/@unlesspermission) + Gate definitions +
-SuperUser bypass + custom 403 view + tests/Feature/Authorization/
+## Critical SPEC-over-task-file overrides (phase 2, still relevant)
+- Users have `full_name` (not `name_ar`/`name_en`) and `phone` (not `mobile`)
+- `permissions` table column is `group_key` (not `group`)
+- Migration date prefix for Phase 3: `2026_04_22_*`
+- Migration date prefix for Phase 4: `2026_04_23_*`

@@ -8,21 +8,13 @@ function flatKeys(string $locale, string $file): array
     return array_keys(Arr::dot(require $path));
 }
 
-test('auth translation files have matching keys in ar and en', function () {
-    expect(flatKeys('ar', 'auth'))->toBe(flatKeys('en', 'auth'));
-});
+$translationFiles = ['auth', 'profile', 'common', 'validation', 'errors', 'layout', 'promote', 'tickets'];
 
-test('profile translation files have matching keys in ar and en', function () {
-    expect(flatKeys('ar', 'profile'))->toBe(flatKeys('en', 'profile'));
-});
-
-test('common translation files have matching keys in ar and en', function () {
-    expect(flatKeys('ar', 'common'))->toBe(flatKeys('en', 'common'));
-});
-
-test('validation translation files have matching keys in ar and en', function () {
-    expect(flatKeys('ar', 'validation'))->toBe(flatKeys('en', 'validation'));
-});
+foreach ($translationFiles as $file) {
+    test("{$file} translation files have matching keys in ar and en", function () use ($file) {
+        expect(flatKeys('ar', $file))->toBe(flatKeys('en', $file));
+    });
+}
 
 test('auth and profile blade views use translation helpers', function () {
     $views = array_merge(
