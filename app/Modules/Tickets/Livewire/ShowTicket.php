@@ -9,6 +9,7 @@ use App\Modules\Tickets\Exceptions\InvalidTicketTransitionException;
 use App\Modules\Tickets\Models\Ticket;
 use App\Modules\Tickets\Models\TransferRequest;
 use App\Modules\Tickets\Services\TicketStateMachine;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -161,6 +162,10 @@ class ShowTicket extends Component
             ->where('status', 'pending')
             ->first();
 
-        return view('livewire.tickets.show-ticket', compact('techs', 'pendingTransfer'));
+        $ticketSla = DB::table('ticket_sla')
+            ->where('ticket_id', $this->ticket->id)
+            ->first();
+
+        return view('livewire.tickets.show-ticket', compact('techs', 'pendingTransfer', 'ticketSla'));
     }
 }

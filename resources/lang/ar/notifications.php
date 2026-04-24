@@ -56,4 +56,16 @@ return [
         'greeting' => 'مرحباً :name،',
         'body'     => 'تم إرسال طلب تحويل الطلب :display_number — ":subject" إليك. يرجى قبوله أو رفضه.',
     ],
+
+    'sla_warning' => [
+        'subject'  => 'تحذير اتفاقية مستوى الخدمة — :display_number',
+        'greeting' => 'مرحباً :name،',
+        'body'     => 'الطلب :display_number — ":subject" يقترب من الموعد النهائي لاتفاقية مستوى الخدمة. يرجى اتخاذ الإجراء اللازم في أقرب وقت.',
+    ],
+
+    'sla_breached' => [
+        'subject'  => 'تجاوز اتفاقية مستوى الخدمة — :display_number',
+        'greeting' => 'مرحباً :name،',
+        'body'     => 'تجاوز الطلب :display_number — ":subject" الموعد النهائي لاتفاقية مستوى الخدمة. يُرجى التدخل الفوري.',
+    ],
 ];
