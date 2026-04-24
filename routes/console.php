@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('sla:check')->everyMinute();
+Schedule::command('csat:expire')->daily();
