@@ -2,10 +2,13 @@
 
 namespace App\Modules\SLA\Services;
 
+use App\Modules\SLA\Events\SlaBreach;
+use App\Modules\SLA\Events\SlaWarning;
 use App\Modules\SLA\Models\SlaPauseLog;
 use App\Modules\SLA\Models\SlaPolicy;
 use App\Modules\SLA\Models\TicketSla;
 use App\Modules\Tickets\Events\TicketStatusChanged;
+use Illuminate\Support\Facades\DB;
 
 class SlaService
 {
@@ -21,13 +24,14 @@ class SlaService
 
     public function handleStatusChange(TicketStatusChanged $event): void
     {
-        $toStatus   = $event->toStatus;
+        $toStatus = $event->toStatus;
         $fromStatus = $event->fromStatus;
-        $ticket     = $event->ticket;
+        $ticket = $event->ticket;
 
         // Ticket creation — bootstrap the SLA row
         if ($fromStatus === '' && $toStatus === 'awaiting_assignment') {
             $this->bootstrap($ticket->id, $ticket->priority?->value);
+
             return;
         }
 
@@ -40,11 +44,13 @@ class SlaService
 
         if (in_array($toStatus, self::PAUSED_STATUSES, true)) {
             $this->pauseClock($sla, $toStatus, $use24x7);
+
             return;
         }
 
         if (in_array($toStatus, self::STOPPED_STATUSES, true)) {
             $this->stopClock($sla, $use24x7);
+
             return;
         }
 
@@ -58,16 +64,16 @@ class SlaService
         $policy = $priority ? SlaPolicy::where('priority', $priority)->first() : null;
 
         TicketSla::create([
-            'ticket_id'                  => $ticketId,
-            'response_target_minutes'    => $policy?->response_target_minutes,
-            'resolution_target_minutes'  => $policy?->resolution_target_minutes,
-            'response_elapsed_minutes'   => 0,
+            'ticket_id' => $ticketId,
+            'response_target_minutes' => $policy?->response_target_minutes,
+            'resolution_target_minutes' => $policy?->resolution_target_minutes,
+            'response_elapsed_minutes' => 0,
             'resolution_elapsed_minutes' => 0,
-            'response_met_at'            => null,
-            'response_status'            => 'on_track',
-            'resolution_status'          => 'on_track',
-            'last_clock_start'           => now(),
-            'is_clock_running'           => true,
+            'response_met_at' => null,
+            'response_status' => 'on_track',
+            'resolution_status' => 'on_track',
+            'last_clock_start' => now(),
+            'is_clock_running' => true,
         ]);
     }
 
@@ -85,10 +91,10 @@ class SlaService
                 ? $this->calc->minutesBetween($sla->last_clock_start, now(), $use24x7)
                 : 0;
 
-            $sla->response_elapsed_minutes  += $added;
+            $sla->response_elapsed_minutes += $added;
             $sla->resolution_elapsed_minutes += $added;
-            $sla->response_met_at            = now();
-            $sla->last_clock_start           = now();
+            $sla->response_met_at = now();
+            $sla->last_clock_start = now();
         }
 
         $sla->save();
@@ -106,8 +112,8 @@ class SlaService
 
         SlaPauseLog::create([
             'ticket_sla_id' => $sla->id,
-            'paused_at'     => now(),
-            'pause_status'  => $pauseStatus,
+            'paused_at' => now(),
+            'pause_status' => $pauseStatus,
         ]);
     }
 
@@ -146,9 +152,63 @@ class SlaService
 
         if ($openLog) {
             $openLog->update([
-                'resumed_at'       => now(),
+                'resumed_at' => now(),
                 'duration_minutes' => (int) $openLog->paused_at->diffInMinutes(now()),
             ]);
+        }
+    }
+
+    public function recalculateStatus(
+        TicketSla $sla,
+        string $displayNumber,
+        string $subject,
+        ?string $assignedTo,
+    ): void {
+        $threshold = $this->resolveWarningThreshold();
+        $changed = false;
+
+        if ($sla->response_met_at === null && $sla->response_target_minutes) {
+            $pct = ($sla->response_elapsed_minutes / $sla->response_target_minutes) * 100;
+            $new = $pct >= 100 ? 'breached' : ($pct >= $threshold ? 'warning' : 'on_track');
+
+            if ($new !== $sla->response_status) {
+                $old = $sla->response_status;
+                $sla->response_status = $new;
+                $changed = true;
+                $this->maybeFireEvent($new, $old, $sla->ticket_id, $displayNumber, $subject, $assignedTo, 'response');
+            }
+        }
+
+        if ($sla->resolution_target_minutes) {
+            $pct = ($sla->resolution_elapsed_minutes / $sla->resolution_target_minutes) * 100;
+            $new = $pct >= 100 ? 'breached' : ($pct >= $threshold ? 'warning' : 'on_track');
+
+            if ($new !== $sla->resolution_status) {
+                $old = $sla->resolution_status;
+                $sla->resolution_status = $new;
+                $changed = true;
+                $this->maybeFireEvent($new, $old, $sla->ticket_id, $displayNumber, $subject, $assignedTo, 'resolution');
+            }
+        }
+
+        if ($changed) {
+            $sla->save();
+        }
+    }
+
+    private function maybeFireEvent(
+        string $new,
+        string $old,
+        string $ticketId,
+        string $displayNumber,
+        string $subject,
+        ?string $assignedTo,
+        string $type,
+    ): void {
+        if ($new === 'warning' && $old === 'on_track') {
+            event(new SlaWarning($ticketId, $displayNumber, $subject, $assignedTo, $type));
+        } elseif ($new === 'breached' && in_array($old, ['on_track', 'warning'], true)) {
+            event(new SlaBreach($ticketId, $displayNumber, $subject, $assignedTo, $type));
         }
     }
 
@@ -159,5 +219,19 @@ class SlaService
         }
 
         return (bool) SlaPolicy::where('priority', $priority)->value('use_24x7');
+    }
+
+    private function resolveWarningThreshold(): int
+    {
+        try {
+            $val = DB::table('app_settings')->where('key', 'sla_warning_threshold')->value('value');
+            if ($val !== null) {
+                return (int) $val;
+            }
+        } catch (\Exception) {
+            // app_settings table not yet created (Phase 8)
+        }
+
+        return 75;
     }
 }

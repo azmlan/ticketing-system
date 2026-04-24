@@ -56,4 +56,16 @@ return [
         'greeting' => 'Hello :name,',
         'body'     => 'A transfer request for ticket :display_number — ":subject" has been sent to you. Please accept or decline.',
     ],
+
+    'sla_warning' => [
+        'subject'  => 'SLA warning — :display_number',
+        'greeting' => 'Hello :name,',
+        'body'     => 'Ticket :display_number — ":subject" is approaching its SLA deadline. Please take action promptly.',
+    ],
+
+    'sla_breached' => [
+        'subject'  => 'SLA breached — :display_number',
+        'greeting' => 'Hello :name,',
+        'body'     => 'Ticket :display_number — ":subject" has exceeded its SLA deadline. Immediate attention is required.',
+    ],
 ];
