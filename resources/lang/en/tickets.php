@@ -90,6 +90,18 @@ return [
     ],
 
     'dashboard' => [
+        'tech' => [
+            'title'                => 'Tech Dashboard',
+            'queue_title'          => 'Unassigned Queue',
+            'my_tickets_title'     => 'My Tickets',
+            'transfer_panel_title' => 'Pending Transfer Requests',
+            'transfer_from'        => 'From',
+            'transfer_actions'     => 'Actions',
+            'stat_open'            => 'Open',
+            'stat_resolved_week'   => 'Resolved This Week',
+            'stat_resolved_month'  => 'Resolved This Month',
+            'stat_sla_compliance'  => 'SLA Compliance',
+        ],
         'employee' => [
             'title'              => 'My Dashboard',
             'new_ticket'         => 'New Ticket',

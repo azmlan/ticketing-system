@@ -90,6 +90,18 @@ return [
     ],
 
     'dashboard' => [
+        'tech' => [
+            'title'                => 'لوحة تحكم الفني',
+            'queue_title'          => 'طابور التذاكر غير المسندة',
+            'my_tickets_title'     => 'تذاكري',
+            'transfer_panel_title' => 'طلبات التحويل المعلقة',
+            'transfer_from'        => 'من',
+            'transfer_actions'     => 'الإجراءات',
+            'stat_open'            => 'مفتوحة',
+            'stat_resolved_week'   => 'محلولة هذا الأسبوع',
+            'stat_resolved_month'  => 'محلولة هذا الشهر',
+            'stat_sla_compliance'  => 'الامتثال لـ SLA',
+        ],
         'employee' => [
             'title'              => 'لوحة التحكم الخاصة بي',
             'new_ticket'         => 'تذكرة جديدة',
