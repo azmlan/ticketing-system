@@ -44,8 +44,14 @@
             </div>
         @endif
 
-        {{-- Attachments hook (implemented in Task 2.5) --}}
-        {{-- wire:model="attachments" placeholder --}}
+        {{-- Attachments (up to 5 files, processed server-side) --}}
+        <div class="mb-4">
+            <label for="attachments">{{ __('tickets.create.attachments') }}</label>
+            <input id="attachments" type="file" wire:model="attachments" multiple
+                   accept=".jpg,.jpeg,.png,.gif,.webp,.pdf,.doc,.docx">
+            @error('attachments') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+            @error('attachments.*') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+        </div>
 
         <button type="submit">{{ __('tickets.create.submit') }}</button>
     </form>
