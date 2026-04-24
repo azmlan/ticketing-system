@@ -4,6 +4,7 @@ namespace App\Modules\Tickets\Providers;
 
 use App\Modules\Shared\Contracts\SearchServiceInterface;
 use App\Modules\Tickets\Livewire\CreateTicket;
+use App\Modules\Tickets\Livewire\EmployeeDashboard;
 use App\Modules\Tickets\Livewire\ShowTicket;
 use App\Modules\Tickets\Livewire\TicketList;
 use App\Modules\Tickets\Models\Ticket;
@@ -29,6 +30,7 @@ class TicketsServiceProvider extends ServiceProvider
         Gate::policy(TicketAttachment::class, TicketAttachmentPolicy::class);
 
         Livewire::component('tickets.create-ticket', CreateTicket::class);
+        Livewire::component('tickets.employee-dashboard', EmployeeDashboard::class);
         Livewire::component('tickets.show-ticket', ShowTicket::class);
         Livewire::component('tickets.ticket-list', TicketList::class);
 

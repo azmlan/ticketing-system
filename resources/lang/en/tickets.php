@@ -89,6 +89,23 @@ return [
         ],
     ],
 
+    'dashboard' => [
+        'employee' => [
+            'title'              => 'My Dashboard',
+            'new_ticket'         => 'New Ticket',
+            'search_placeholder' => 'Search by subject…',
+            'badge_open'         => 'Open',
+            'badge_resolved'     => 'Resolved',
+            'badge_closed'       => 'Closed',
+            'badge_cancelled'    => 'Cancelled',
+            'filter_all'         => 'All',
+            'filter_open'        => 'Open',
+            'filter_resolved'    => 'Resolved',
+            'filter_closed'      => 'Closed',
+            'filter_cancelled'   => 'Cancelled',
+        ],
+    ],
+
     'assignment' => [
         'not_a_tech'             => 'Only technicians can self-assign tickets.',
         'not_group_manager'      => 'You can only assign tickets within your group.',

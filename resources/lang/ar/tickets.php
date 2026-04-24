@@ -89,6 +89,23 @@ return [
         ],
     ],
 
+    'dashboard' => [
+        'employee' => [
+            'title'              => 'لوحة التحكم الخاصة بي',
+            'new_ticket'         => 'تذكرة جديدة',
+            'search_placeholder' => 'البحث بالموضوع…',
+            'badge_open'         => 'مفتوحة',
+            'badge_resolved'     => 'محلولة',
+            'badge_closed'       => 'مغلقة',
+            'badge_cancelled'    => 'ملغاة',
+            'filter_all'         => 'الكل',
+            'filter_open'        => 'مفتوحة',
+            'filter_resolved'    => 'محلولة',
+            'filter_closed'      => 'مغلقة',
+            'filter_cancelled'   => 'ملغاة',
+        ],
+    ],
+
     'assignment' => [
         'not_a_tech'             => 'يمكن للفنيين فقط استلام التذاكر.',
         'not_group_manager'      => 'يمكنك تعيين التذاكر ضمن مجموعتك فقط.',
