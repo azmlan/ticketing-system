@@ -1,38 +1,35 @@
 <?php
 
-namespace App\Modules\Communication\Models;
+namespace App\Modules\Admin\Models;
 
-use Database\Factories\ResponseTemplateFactory;
+use Database\Factories\TagFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ResponseTemplate extends Model
+class Tag extends Model
 {
     use HasFactory, HasUlids, SoftDeletes;
 
-    protected static function newFactory(): ResponseTemplateFactory
-    {
-        return ResponseTemplateFactory::new();
-    }
-
     protected $fillable = [
-        'title_ar',
-        'title_en',
-        'body_ar',
-        'body_en',
-        'is_internal',
+        'name_ar',
+        'name_en',
+        'color',
         'is_active',
     ];
 
     protected function casts(): array
     {
         return [
-            'is_internal' => 'boolean',
-            'is_active'   => 'boolean',
+            'is_active' => 'boolean',
         ];
+    }
+
+    protected static function newFactory(): TagFactory
+    {
+        return TagFactory::new();
     }
 
     public function scopeActive(Builder $query): Builder
@@ -42,6 +39,6 @@ class ResponseTemplate extends Model
 
     public function localizedName(): string
     {
-        return app()->getLocale() === 'ar' ? $this->title_ar : $this->title_en;
+        return app()->getLocale() === 'ar' ? $this->name_ar : $this->name_en;
     }
 }

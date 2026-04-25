@@ -148,14 +148,10 @@ it('span from Thursday afternoon to Monday morning skips weekend', function () {
 // ─── app_settings override ───────────────────────────────────────────────────
 
 it('respects working_days override from app_settings', function () {
-    // Create the app_settings table (Phase 8 migration not yet run in test env)
-    DB::statement('CREATE TABLE IF NOT EXISTS app_settings (id VARCHAR(26) PRIMARY KEY, `key` VARCHAR(100) NOT NULL UNIQUE, value TEXT NULL, created_at DATETIME, updated_at DATETIME)');
-
-    DB::table('app_settings')->insert([
-        ['id' => \Illuminate\Support\Str::ulid(), 'key' => 'working_days',         'value' => '["mon","tue","wed","thu","fri"]', 'created_at' => now(), 'updated_at' => now()],
-        ['id' => \Illuminate\Support\Str::ulid(), 'key' => 'business_hours_start', 'value' => '09:00',                            'created_at' => now(), 'updated_at' => now()],
-        ['id' => \Illuminate\Support\Str::ulid(), 'key' => 'business_hours_end',   'value' => '17:00',                            'created_at' => now(), 'updated_at' => now()],
-    ]);
+    // app_settings is seeded by migration; update the relevant keys
+    DB::table('app_settings')->where('key', 'working_days')->update(['value' => '["mon","tue","wed","thu","fri"]']);
+    DB::table('app_settings')->where('key', 'business_hours_start')->update(['value' => '09:00']);
+    DB::table('app_settings')->where('key', 'business_hours_end')->update(['value' => '17:00']);
 
     $calc = new BusinessHoursCalculator();
     // Friday 2026-04-24 (fri is now a working day)
