@@ -14,9 +14,9 @@ class SlaStatusBadge extends Component
     public function colorClasses(): string
     {
         return match ($this->status) {
-            'warning' => 'bg-yellow-100 text-yellow-800',
-            'breached' => 'bg-red-100 text-red-800',
-            default => 'bg-green-100 text-green-800',
+            'warning' => 'bg-warning/10 text-warning',
+            'breached' => 'bg-danger/10 text-danger',
+            default => 'bg-success/10 text-success',
         };
     }
 

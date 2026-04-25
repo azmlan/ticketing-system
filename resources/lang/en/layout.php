@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'nav_main'           => 'Main',
     'nav_profile'        => 'Profile',
     'nav_promote'        => 'Promote Employee',
     'nav_all_tickets'    => 'All Tickets',

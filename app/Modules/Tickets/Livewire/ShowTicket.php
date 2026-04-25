@@ -122,10 +122,10 @@ class ShowTicket extends Component
         $this->ticket->refresh();
     }
 
-    public function requestTransfer(string $toUserId): void
+    public function requestTransfer(): void
     {
         $from = auth()->user();
-        $to = User::findOrFail($toUserId);
+        $to = User::findOrFail($this->transferToUserId);
         app(TransferService::class)->request($this->ticket, $from, $to);
         $this->ticket->refresh();
         $this->transferToUserId = '';

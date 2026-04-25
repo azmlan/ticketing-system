@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'nav_main'           => 'رئيسي',
     'nav_profile'        => 'الملف الشخصي',
     'nav_promote'        => 'ترقية موظف',
     'nav_all_tickets'    => 'جميع التذاكر',

@@ -34,7 +34,8 @@ it('assigned tech can request a transfer to another tech', function () {
 
     Livewire::actingAs($techA)
         ->test(ShowTicket::class, ['ticket' => $ticket])
-        ->call('requestTransfer', $techB->id)
+        ->set('transferToUserId', $techB->id)
+        ->call('requestTransfer')
         ->assertHasNoErrors();
 
     $tr = TransferRequest::where('ticket_id', $ticket->id)->first();
