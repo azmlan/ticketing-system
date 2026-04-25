@@ -6,7 +6,6 @@ use App\Modules\Admin\Models\Category;
 use App\Modules\Admin\Models\Group;
 use App\Modules\Reporting\Services\ReportService;
 use App\Modules\Shared\Models\User;
-use Illuminate\Support\Collection;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -16,13 +15,18 @@ class ReportPage extends Component
     public string $reportType = 'ticket_volume';
 
     public string $dateFrom = '';
-    public string $dateTo   = '';
+
+    public string $dateTo = '';
 
     public string $categoryId = '';
-    public string $priority   = '';
-    public string $groupId    = '';
-    public string $techId     = '';
-    public string $status     = '';
+
+    public string $priority = '';
+
+    public string $groupId = '';
+
+    public string $techId = '';
+
+    public string $status = '';
 
     public function mount(): void
     {
@@ -32,55 +36,64 @@ class ReportPage extends Component
         );
 
         $this->dateFrom = now()->startOfMonth()->toDateString();
-        $this->dateTo   = now()->toDateString();
+        $this->dateTo = now()->toDateString();
     }
 
     public function updatedReportType(): void {}
+
     public function updatedCategoryId(): void {}
+
     public function updatedPriority(): void {}
+
     public function updatedGroupId(): void {}
+
     public function updatedTechId(): void {}
+
     public function updatedStatus(): void {}
 
     public function resetFilters(): void
     {
         $this->categoryId = '';
-        $this->priority   = '';
-        $this->groupId    = '';
-        $this->techId     = '';
-        $this->status     = '';
+        $this->priority = '';
+        $this->groupId = '';
+        $this->techId = '';
+        $this->status = '';
     }
 
     public function render(ReportService $reportService)
     {
-        $rows    = collect();
+        $rows = collect();
         $headers = [];
 
         if ($this->dateFrom && $this->dateTo && $this->dateTo >= $this->dateFrom) {
-            $rows    = $reportService->run($this->reportType, $this->buildFilters());
+            $rows = $reportService->run($this->reportType, $this->buildFilters());
             $headers = $reportService->headers($this->reportType);
         }
 
+        $exportParams = array_filter($this->buildFilters());
+
         return view('livewire.reports.report-page', [
-            'rows'        => $rows,
-            'headers'     => $headers,
+            'rows' => $rows,
+            'headers' => $headers,
             'reportTypes' => $reportService->types(),
-            'categories'  => Category::where('is_active', true)->whereNull('deleted_at')->orderBy('name_en')->get(),
-            'groups'      => Group::where('is_active', true)->whereNull('deleted_at')->orderBy('name_en')->get(),
-            'techs'       => User::where('is_tech', true)->orderBy('full_name')->get(),
+            'categories' => Category::where('is_active', true)->whereNull('deleted_at')->orderBy('name_en')->get(),
+            'groups' => Group::where('is_active', true)->whereNull('deleted_at')->orderBy('name_en')->get(),
+            'techs' => User::where('is_tech', true)->orderBy('full_name')->get(),
+            'csvExportUrl' => route('reports.export', array_merge($exportParams, ['format' => 'csv'])),
+            'xlsxExportUrl' => route('reports.export', array_merge($exportParams, ['format' => 'xlsx'])),
         ]);
     }
 
-    private function buildFilters(): array
+    public function buildFilters(): array
     {
         return [
-            'date_from'   => $this->dateFrom,
-            'date_to'     => $this->dateTo,
+            'date_from' => $this->dateFrom,
+            'date_to' => $this->dateTo,
             'category_id' => $this->categoryId ?: null,
-            'priority'    => $this->priority ?: null,
-            'group_id'    => $this->groupId ?: null,
-            'tech_id'     => $this->techId ?: null,
-            'status'      => $this->status ?: null,
+            'priority' => $this->priority ?: null,
+            'group_id' => $this->groupId ?: null,
+            'tech_id' => $this->techId ?: null,
+            'status' => $this->status ?: null,
         ];
     }
 }

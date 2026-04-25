@@ -82,7 +82,17 @@
             </div>
         </div>
 
-        <div class="mt-3 flex justify-end">
+        <div class="mt-3 flex justify-between items-center">
+            <div class="flex gap-2">
+                <a href="{{ $csvExportUrl }}"
+                   class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
+                    {{ __('reports.export.download_csv') }}
+                </a>
+                <a href="{{ $xlsxExportUrl }}"
+                   class="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
+                    {{ __('reports.export.download_xlsx') }}
+                </a>
+            </div>
             <button wire:click="resetFilters"
                     class="text-sm text-gray-500 hover:text-gray-700 px-3 py-1 rounded border">
                 {{ __('common.clear') }}

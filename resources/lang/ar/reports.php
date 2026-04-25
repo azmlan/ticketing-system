@@ -75,4 +75,52 @@ return [
         'date_to_required'   => 'تاريخ الانتهاء مطلوب.',
         'date_order'         => 'يجب أن يكون تاريخ الانتهاء بعد تاريخ البدء أو مساوياً له.',
     ],
+
+    'export' => [
+        'download_csv'  => 'تنزيل CSV',
+        'download_xlsx' => 'تنزيل XLSX',
+
+        // Standard column headers
+        'ticket_number' => 'رقم التذكرة',
+        'subject'       => 'الموضوع',
+        'status'        => 'الحالة',
+        'priority'      => 'الأولوية',
+        'category'      => 'الفئة',
+        'subcategory'   => 'الفئة الفرعية',
+        'group'         => 'المجموعة',
+        'assigned_tech' => 'الفني المُعيَّن',
+        'requester'     => 'مقدم الطلب',
+        'created_at'    => 'تاريخ الإنشاء',
+        'resolved_at'   => 'تاريخ الحل',
+        'closed_at'     => 'تاريخ الإغلاق',
+
+        // SLA column headers
+        'sla_response_target_mins'     => 'هدف الاستجابة (دقيقة)',
+        'sla_response_actual_mins'     => 'الاستجابة الفعلية (دقيقة)',
+        'sla_response_status'          => 'حالة SLA للاستجابة',
+        'sla_resolution_target_mins'   => 'هدف الحل (دقيقة)',
+        'sla_resolution_actual_mins'   => 'الحل الفعلي (دقيقة)',
+        'sla_resolution_status'        => 'حالة SLA للحل',
+        'sla_total_paused_mins'        => 'إجمالي وقت الإيقاف (دقيقة)',
+
+        // SLA status values
+        'sla_statuses' => [
+            'on_track' => 'في المسار',
+            'warning'  => 'تحذير',
+            'breached' => 'منتهك',
+        ],
+
+        // CSAT column headers
+        'csat_rating'       => 'تقييم CSAT',
+        'csat_comment'      => 'تعليق CSAT',
+        'csat_submitted_at' => 'تاريخ إرسال CSAT',
+        'csat_status'       => 'حالة CSAT',
+
+        // CSAT status values
+        'csat_statuses' => [
+            'pending'   => 'في الانتظار',
+            'submitted' => 'مُرسَل',
+            'expired'   => 'منتهي الصلاحية',
+        ],
+    ],
 ];

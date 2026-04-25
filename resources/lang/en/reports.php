@@ -75,4 +75,52 @@ return [
         'date_to_required'   => 'The end date is required.',
         'date_order'         => 'The end date must be on or after the start date.',
     ],
+
+    'export' => [
+        'download_csv'  => 'Download CSV',
+        'download_xlsx' => 'Download XLSX',
+
+        // Standard column headers
+        'ticket_number' => 'Ticket #',
+        'subject'       => 'Subject',
+        'status'        => 'Status',
+        'priority'      => 'Priority',
+        'category'      => 'Category',
+        'subcategory'   => 'Subcategory',
+        'group'         => 'Group',
+        'assigned_tech' => 'Assigned Tech',
+        'requester'     => 'Requester',
+        'created_at'    => 'Created At',
+        'resolved_at'   => 'Resolved At',
+        'closed_at'     => 'Closed At',
+
+        // SLA column headers
+        'sla_response_target_mins'     => 'Response Target (mins)',
+        'sla_response_actual_mins'     => 'Response Actual (mins)',
+        'sla_response_status'          => 'Response SLA Status',
+        'sla_resolution_target_mins'   => 'Resolution Target (mins)',
+        'sla_resolution_actual_mins'   => 'Resolution Actual (mins)',
+        'sla_resolution_status'        => 'Resolution SLA Status',
+        'sla_total_paused_mins'        => 'Total Paused Time (mins)',
+
+        // SLA status values
+        'sla_statuses' => [
+            'on_track' => 'On Track',
+            'warning'  => 'Warning',
+            'breached' => 'Breached',
+        ],
+
+        // CSAT column headers
+        'csat_rating'       => 'CSAT Rating',
+        'csat_comment'      => 'CSAT Comment',
+        'csat_submitted_at' => 'CSAT Submitted At',
+        'csat_status'       => 'CSAT Status',
+
+        // CSAT status values
+        'csat_statuses' => [
+            'pending'   => 'Pending',
+            'submitted' => 'Submitted',
+            'expired'   => 'Expired',
+        ],
+    ],
 ];
