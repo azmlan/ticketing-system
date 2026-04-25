@@ -39,4 +39,9 @@ class ResponseTemplate extends Model
     {
         return $query->where('is_active', true);
     }
+
+    public function localizedName(): string
+    {
+        return app()->getLocale() === 'ar' ? $this->title_ar : $this->title_en;
+    }
 }

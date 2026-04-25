@@ -46,6 +46,28 @@
         </div>
     @endif
 
+    {{-- Custom field values (all, including deactivated/deleted fields per §13.3) --}}
+    @if ($customFieldEntries->isNotEmpty())
+        <div class="mb-6">
+            <h3 class="font-semibold mb-3">{{ __('tickets.show.custom_fields') }}</h3>
+            <dl class="divide-y divide-gray-100 rounded-md border border-gray-200">
+                @foreach ($customFieldEntries as $entry)
+                    <div class="px-4 py-3 flex gap-4">
+                        <dt class="text-sm font-medium text-gray-500 w-48 shrink-0 {{ $entry['inactive'] ? 'opacity-60' : '' }}">
+                            {{ $entry['label'] }}
+                            @if ($entry['inactive'])
+                                <span class="ms-1 text-xs text-gray-400">({{ __('tickets.show.field_inactive') }})</span>
+                            @endif
+                        </dt>
+                        <dd class="text-sm text-gray-900 {{ $entry['inactive'] ? 'opacity-60' : '' }}">
+                            {{ $entry['value'] !== '' && $entry['value'] !== null ? $entry['value'] : '—' }}
+                        </dd>
+                    </div>
+                @endforeach
+            </dl>
+        </div>
+    @endif
+
     <div class="flex flex-wrap gap-3">
 
         @can('selfAssign', $ticket)

@@ -7,6 +7,8 @@ return [
         'description' => 'Description',
         'category'    => 'Category',
         'subcategory' => 'Subcategory',
+        'department'  => 'Department',
+        'location'    => 'Location',
         'attachments' => 'Attachments (up to 5)',
         'submit'      => 'Submit Ticket',
         'success'     => 'Ticket created successfully.',
@@ -27,6 +29,8 @@ return [
     'rate_limit_exceeded' => 'You have exceeded the ticket creation limit. Please try again later.',
     'select_category'     => 'Select a category...',
     'select_subcategory'  => 'Select a subcategory...',
+    'select_department'   => 'Select a department...',
+    'select_location'     => 'Select a location...',
 
     'status' => [
         'awaiting_assignment'     => 'Awaiting Assignment',
@@ -65,11 +69,17 @@ return [
         ],
     ],
 
+    'custom_fields' => [
+        'select_option' => 'Select an option...',
+    ],
+
     'show' => [
         'status_label'                => 'Status',
         'assigned_to'                 => 'Assigned To',
         'group'                       => 'Group',
         'attachments'                 => 'Attachments',
+        'custom_fields'               => 'Additional Fields',
+        'field_inactive'              => 'inactive',
         'select_tech'                 => 'Select a technician...',
         'select_close_reason'         => 'Select a close reason...',
         'close_reason_text_placeholder' => 'Describe the reason for closing...',

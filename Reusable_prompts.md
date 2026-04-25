@@ -11,8 +11,8 @@
 - Repeat
 
 ## This is the Prompt u should use : 
-Now generate all task-X-X.md files for Phase [7] only.
-Location: docs/tasks/phase-[7]/
+Now generate all task-X-X.md files for Phase [9] only.
+Location: docs/tasks/phase-[9]/
 Format: prompt-style, not documentation. Each file must include:
 - Context (1-2 lines)
 - Task (imperative)
@@ -21,19 +21,19 @@ Format: prompt-style, not documentation. Each file must include:
 - Acceptance (Pest tests + behavior)
 - Reference sections in SPEC.md
 
-Keep each under 70 lines. When done, stop. Do not write code.
+Keep each under 90 lines. When done, stop. Do not write code.
 ====================================== 
 ## check if need to clear in the current tasks 
 - look at next task ,can u do it in this context ? or  u need to do a context file or something after clear command ? check it out and make sure 100% that u answer me correctly
 
 ## prompt after clearing mid-phase : 
-Read .claude/task-context.md then execute Task 1.7 per docs/tasks/phase-1/task-1-7.md and CLAUDE.md/SPEC.md.
+Read .claude/task-context.md then execute Task 1.9 per docs/tasks/phase-1/task-1-9.md and CLAUDE.md/SPEC.md.
 
 ======================================
 # Rusable Executing Task prompt : 
-## Phase 7
-Execute the next unchecked task in docs/phases/phase-7.md.
-Read the corresponding task file in docs/tasks/phase-7/.
+## Phase 9
+Execute the next unchecked task in docs/phases/phase-9.md.
+Read the corresponding task file in docs/tasks/phase-9/.
 Follow CLAUDE.md and SPEC.md strictly.
 Write Pest tests, run them, when you done commit on the brnach, then wait for me to give you the next task.
-When I approve, tick the checkbox in phase-7.md and update .claude/task-context.md with the completed task, key file locations, and current test count.
+When I approve, tick the checkbox in phase-9.md and update .claude/task-context.md with the completed task, key file locations, and current test count.

@@ -11,6 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(prepend: [
+            \App\Modules\Shared\Middleware\SessionTimeoutMiddleware::class,
+        ]);
         $middleware->web(append: [
             \App\Modules\Shared\Middleware\SetLocaleMiddleware::class,
             \App\Modules\Shared\Middleware\SecurityHeadersMiddleware::class,

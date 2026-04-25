@@ -134,14 +134,10 @@ it('respects sla_warning_threshold from app_settings instead of default 75', fun
     $t0 = Carbon::parse('2026-04-21 10:00');
     Carbon::setTestNow($t0);
 
-    DB::statement('CREATE TABLE IF NOT EXISTS app_settings (id VARCHAR(26) PRIMARY KEY, `key` VARCHAR(100) NOT NULL UNIQUE, value TEXT NULL, created_at DATETIME, updated_at DATETIME)');
-    DB::table('app_settings')->insert([
-        'id' => (string) Str::ulid(),
-        'key' => 'sla_warning_threshold',
-        'value' => '90',
-        'created_at' => now(),
-        'updated_at' => now(),
-    ]);
+    // app_settings is seeded by migration; just update the existing key
+    DB::table('app_settings')
+        ->where('key', 'sla_warning_threshold')
+        ->update(['value' => '90']);
 
     SlaPolicy::factory()->medium()->create();
     $ticket = Ticket::factory()->create(['priority' => 'medium']);

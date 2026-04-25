@@ -7,6 +7,8 @@ return [
         'description' => 'الوصف',
         'category'    => 'التصنيف',
         'subcategory' => 'التصنيف الفرعي',
+        'department'  => 'القسم',
+        'location'    => 'الموقع',
         'attachments' => 'المرفقات (حتى 5 ملفات)',
         'submit'      => 'إرسال التذكرة',
         'success'     => 'تم إنشاء التذكرة بنجاح.',
@@ -27,6 +29,8 @@ return [
     'rate_limit_exceeded' => 'لقد تجاوزت الحد المسموح به من التذاكر. يرجى المحاولة لاحقاً.',
     'select_category'     => 'اختر التصنيف...',
     'select_subcategory'  => 'اختر التصنيف الفرعي...',
+    'select_department'   => 'اختر القسم...',
+    'select_location'     => 'اختر الموقع...',
 
     'status' => [
         'awaiting_assignment'     => 'في انتظار التعيين',
@@ -65,11 +69,17 @@ return [
         ],
     ],
 
+    'custom_fields' => [
+        'select_option' => 'اختر خياراً...',
+    ],
+
     'show' => [
         'status_label'                  => 'الحالة',
         'assigned_to'                   => 'مسند إلى',
         'group'                         => 'المجموعة',
         'attachments'                   => 'المرفقات',
+        'custom_fields'                 => 'حقول إضافية',
+        'field_inactive'                => 'غير نشط',
         'select_tech'                   => 'اختر فنياً...',
         'select_close_reason'           => 'اختر سبب الإغلاق...',
         'close_reason_text_placeholder' => 'اذكر سبب الإغلاق...',

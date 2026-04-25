@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Modules\Admin\Models;
+
+use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Model;
+
+class AppSetting extends Model
+{
+    use HasUlids;
+
+    protected $fillable = [
+        'key',
+        'value',
+    ];
+
+    public static function get(string $key, mixed $default = null): mixed
+    {
+        $setting = static::where('key', $key)->first();
+
+        return $setting ? $setting->value : $default;
+    }
+
+    public static function set(string $key, mixed $value): void
+    {
+        static::updateOrCreate(['key' => $key], ['value' => $value]);
+    }
+}
