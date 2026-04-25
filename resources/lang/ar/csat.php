@@ -23,6 +23,12 @@ return [
         'comment_label' => 'التعليق',
         'submitted_at' => 'تاريخ التقديم',
     ],
+    'email' => [
+        'subject'  => 'تم حل طلبك — :display_number',
+        'greeting' => 'مرحباً :name،',
+        'body'     => 'يسعدنا إبلاغك بأنه تم حل التذكرة :display_number — ":subject" بواسطة :tech. يمكنك تسجيل الدخول لعرض التذكرة وتقييم تجربتك.',
+    ],
+
     'validation' => [
         'rating_required' => 'يرجى اختيار تقييم.',
         'rating_range' => 'يجب أن يكون التقييم بين 1 و5.',

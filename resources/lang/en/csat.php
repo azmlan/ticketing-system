@@ -23,6 +23,12 @@ return [
         'comment_label' => 'Comment',
         'submitted_at' => 'Submitted',
     ],
+    'email' => [
+        'subject'  => 'Your request has been resolved — :display_number',
+        'greeting' => 'Hello :name,',
+        'body'     => 'We are pleased to inform you that ticket :display_number — ":subject" has been resolved by :tech. You may log in to view the ticket and rate your experience.',
+    ],
+
     'validation' => [
         'rating_required' => 'Please select a rating.',
         'rating_range' => 'Rating must be between 1 and 5.',
