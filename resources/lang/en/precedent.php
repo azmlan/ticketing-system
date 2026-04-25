@@ -20,6 +20,7 @@ return [
         'search_resolutions'  => 'Search past resolutions...',
         'no_suggestions'      => 'No matching resolutions for the current category.',
         'selected_resolution' => 'Selected Resolution',
+        'no_results'          => 'No matching resolutions found.',
     ],
 
     'resolution_type' => [

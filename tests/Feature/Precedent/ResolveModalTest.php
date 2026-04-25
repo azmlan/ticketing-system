@@ -253,3 +253,203 @@ it('accepts all four valid resolution_type values', function (string $type) {
 
     expect(Resolution::where('ticket_id', $ticket->id)->value('resolution_type'))->toBe($type);
 })->with(['known_fix', 'workaround', 'escalated_externally', 'other']);
+
+// ── Task 9.3 — Resolution Linking ────────────────────────────────────────────
+
+it('modal opens in write mode by default', function () {
+    $tech   = User::factory()->tech()->create();
+    $ticket = inProgressTicketAssignedTo($tech);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->dispatch('open-resolve-modal')
+        ->assertSet('mode', 'write');
+});
+
+it('switching to link mode clears steps_taken and resets search state', function () {
+    $tech   = User::factory()->tech()->create();
+    $ticket = inProgressTicketAssignedTo($tech);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->set('stepsTaken', '<p>some steps</p>')
+        ->set('searchQuery', 'something')
+        ->call('switchMode', 'link')
+        ->assertSet('mode', 'link')
+        ->assertSet('stepsTaken', '')
+        ->assertSet('searchQuery', '');
+});
+
+it('switching back to write mode clears linked resolution', function () {
+    $tech             = User::factory()->tech()->create();
+    $ticket           = inProgressTicketAssignedTo($tech);
+    $resolvedTicket   = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target           = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('linkedResolutionId', $target->id)
+        ->call('switchMode', 'write')
+        ->assertSet('mode', 'write')
+        ->assertSet('linkedResolutionId', '');
+});
+
+it('selectResolution sets linkedResolutionId and clears search query', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('searchQuery', 'something')
+        ->call('selectResolution', $target->id)
+        ->assertSet('linkedResolutionId', $target->id)
+        ->assertSet('searchQuery', '');
+});
+
+it('clearLinkedResolution unsets the linked resolution', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->call('selectResolution', $target->id)
+        ->call('clearLinkedResolution')
+        ->assertSet('linkedResolutionId', '');
+});
+
+it('link mode submit without selecting a resolution returns validation error', function () {
+    $tech   = User::factory()->tech()->create();
+    $ticket = inProgressTicketAssignedTo($tech);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('summary', 'Same fix')
+        ->set('resolutionType', 'known_fix')
+        ->call('submit')
+        ->assertHasErrors(['linkedResolutionId']);
+
+    expect($ticket->fresh()->status)->toBe(TicketStatus::InProgress);
+});
+
+it('link mode submit creates Resolution with linked_resolution_id and resolves ticket', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id, 'usage_count' => 2]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('summary', 'Same fix as before')
+        ->set('resolutionType', 'known_fix')
+        ->call('selectResolution', $target->id)
+        ->call('submit')
+        ->assertSet('open', false)
+        ->assertHasNoErrors();
+
+    expect($ticket->fresh()->status)->toBe(TicketStatus::Resolved);
+
+    $resolution = Resolution::where('ticket_id', $ticket->id)->first();
+    expect($resolution)->not->toBeNull()
+        ->and($resolution->linked_resolution_id)->toBe($target->id)
+        ->and($resolution->steps_taken)->toBeNull()
+        ->and($resolution->summary)->toBe('Same fix as before')
+        ->and($resolution->created_by)->toBe($tech->id);
+});
+
+it('linking increments usage_count on the target resolution atomically', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id, 'usage_count' => 5]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('summary', 'Reusing fix')
+        ->set('resolutionType', 'workaround')
+        ->call('selectResolution', $target->id)
+        ->call('submit');
+
+    expect($target->fresh()->usage_count)->toBe(6);
+});
+
+it('link_notes are stored when linking', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('summary', 'Reusing fix')
+        ->set('resolutionType', 'known_fix')
+        ->set('linkNotes', 'Slightly different hardware model')
+        ->call('selectResolution', $target->id)
+        ->call('submit');
+
+    $resolution = Resolution::where('ticket_id', $ticket->id)->first();
+    expect($resolution->link_notes)->toBe('Slightly different hardware model');
+});
+
+it('link_notes are optional when linking', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('summary', 'Reusing fix')
+        ->set('resolutionType', 'known_fix')
+        ->call('selectResolution', $target->id)
+        ->call('submit')
+        ->assertHasNoErrors();
+
+    expect(Resolution::where('ticket_id', $ticket->id)->value('link_notes'))->toBeNull();
+});
+
+it('xor validation rejects submit when both steps_taken and linked_resolution_id are set', function () {
+    $tech           = User::factory()->tech()->create();
+    $ticket         = inProgressTicketAssignedTo($tech);
+    $resolvedTicket = Ticket::factory()->create(['status' => \App\Modules\Tickets\Enums\TicketStatus::Resolved]);
+    $target         = Resolution::factory()->create(['ticket_id' => $resolvedTicket->id]);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->set('summary', 'Fix')
+        ->set('stepsTaken', '<p>steps</p>')
+        ->set('linkedResolutionId', $target->id)
+        ->set('resolutionType', 'known_fix')
+        ->call('submit')
+        ->assertHasErrors(['linkedResolutionId']);
+
+    expect($ticket->fresh()->status)->toBe(TicketStatus::InProgress)
+        ->and(Resolution::where('ticket_id', $ticket->id)->count())->toBe(0);
+});
+
+it('link mode submit rejects a non-existent resolution id', function () {
+    $tech   = User::factory()->tech()->create();
+    $ticket = inProgressTicketAssignedTo($tech);
+
+    Livewire::actingAs($tech)
+        ->test(ResolveModal::class, ['ticket' => $ticket])
+        ->call('switchMode', 'link')
+        ->set('summary', 'Fix')
+        ->set('resolutionType', 'known_fix')
+        ->set('linkedResolutionId', '01JTOTALLYINVALIDULID00000')
+        ->call('submit')
+        ->assertHasErrors(['linkedResolutionId']);
+
+    expect($ticket->fresh()->status)->toBe(TicketStatus::InProgress);
+});

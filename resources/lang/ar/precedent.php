@@ -20,6 +20,7 @@ return [
         'search_resolutions'  => 'البحث في الحلول السابقة...',
         'no_suggestions'      => 'لا توجد حلول مطابقة للتصنيف الحالي.',
         'selected_resolution' => 'الحل المحدد',
+        'no_results'          => 'لم يتم العثور على حلول مطابقة.',
     ],
 
     'resolution_type' => [
