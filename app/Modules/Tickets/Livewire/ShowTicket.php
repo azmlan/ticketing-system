@@ -56,10 +56,10 @@ class ShowTicket extends Component
         $this->ticket->refresh();
     }
 
-    public function managerAssign(string $techId): void
+    public function managerAssign(): void
     {
         $manager = auth()->user();
-        $tech = User::findOrFail($techId);
+        $tech = User::findOrFail($this->assignToUserId);
         app(AssignmentService::class)->managerAssign($this->ticket, $manager, $tech);
         $this->ticket->refresh();
         $this->assignToUserId = '';

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Precedent\Providers;
 
+use App\Modules\Precedent\Livewire\AutoSuggestPanel;
 use App\Modules\Precedent\Livewire\ResolveModal;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -15,5 +16,6 @@ class PrecedentServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(base_path('resources/lang'), 'precedent');
 
         Livewire::component('precedent.resolve-modal', ResolveModal::class);
+        Livewire::component('precedent.auto-suggest-panel', AutoSuggestPanel::class);
     }
 }

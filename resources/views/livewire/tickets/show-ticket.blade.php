@@ -68,6 +68,10 @@
         </div>
     @endif
 
+    @auth
+        @livewire('precedent.auto-suggest-panel', ['ticket' => $ticket], key('auto-suggest-' . $ticket->id))
+    @endauth
+
     <div class="flex flex-wrap gap-3">
 
         @can('selfAssign', $ticket)
@@ -86,7 +90,7 @@
                         <option value="{{ $tech->id }}">{{ $tech->full_name }}</option>
                     @endforeach
                 </select>
-                <button wire:click="managerAssign(assignToUserId)" type="button"
+                <button wire:click="managerAssign" type="button"
                         class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     {{ __('tickets.show.actions.assign_to') }}
                 </button>

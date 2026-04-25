@@ -44,7 +44,7 @@ class Login extends Component
         RateLimiter::clear($ipKey);
         RateLimiter::clear($emailKey);
 
-        $this->redirect(route('home'), navigate: true);
+        $this->redirect(route('tickets.dashboard.employee'), navigate: true);
     }
 
     public function render()
