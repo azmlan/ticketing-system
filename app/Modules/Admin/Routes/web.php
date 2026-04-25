@@ -2,6 +2,8 @@
 
 use App\Modules\Admin\Livewire\Categories\CategoryIndex;
 use App\Modules\Admin\Livewire\Categories\SubcategoryIndex;
+use App\Modules\Admin\Livewire\Groups\GroupIndex;
+use App\Modules\Admin\Livewire\Groups\GroupMembersIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -12,5 +14,15 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         Route::get('/categories/{category}/subcategories', SubcategoryIndex::class)
             ->name('categories.subcategories');
     });
+
+    // ── Groups ────────────────────────────────────────────────────────────────
+    Route::middleware('can:group.manage')->group(function () {
+        Route::get('/groups', GroupIndex::class)->name('groups.index');
+    });
+
+    // members page: OR logic handled in component mount()
+    Route::get('/groups/{group}/members', GroupMembersIndex::class)
+        ->middleware('auth')
+        ->name('groups.members');
 
 });
