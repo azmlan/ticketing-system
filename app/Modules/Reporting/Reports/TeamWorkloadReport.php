@@ -50,7 +50,7 @@ class TeamWorkloadReport extends BaseReport implements ReportInterface
             ->orderByRaw('COUNT(*) DESC')
             ->get()
             ->map(fn ($row) => [
-                'tech_name'  => $row->tech_name,
+                'tech_name' => $row->tech_name,
                 'open_count' => (int) $row->open_count,
             ]);
     }

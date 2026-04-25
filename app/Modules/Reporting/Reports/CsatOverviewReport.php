@@ -72,20 +72,20 @@ class CsatOverviewReport extends BaseReport implements ReportInterface
             ->orderBy('period')
             ->get()
             ->map(fn ($row) => [
-                'period'          => $row->period,
-                'avg_rating'      => $row->avg_rating !== null
+                'period' => $row->period,
+                'avg_rating' => $row->avg_rating !== null
                     ? round((float) $row->avg_rating, 1)
                     : $none,
                 'submitted_count' => (int) $row->submitted_count,
-                'total_count'     => (int) $row->total_count,
-                'response_rate'   => (int) $row->total_count > 0
-                    ? number_format((int) $row->submitted_count * 100.0 / (int) $row->total_count, 1) . '%'
+                'total_count' => (int) $row->total_count,
+                'response_rate' => (int) $row->total_count > 0
+                    ? number_format((int) $row->submitted_count * 100.0 / (int) $row->total_count, 1).'%'
                     : '0.0%',
-                'rating_1'        => (int) $row->rating_1,
-                'rating_2'        => (int) $row->rating_2,
-                'rating_3'        => (int) $row->rating_3,
-                'rating_4'        => (int) $row->rating_4,
-                'rating_5'        => (int) $row->rating_5,
+                'rating_1' => (int) $row->rating_1,
+                'rating_2' => (int) $row->rating_2,
+                'rating_3' => (int) $row->rating_3,
+                'rating_4' => (int) $row->rating_4,
+                'rating_5' => (int) $row->rating_5,
             ]);
     }
 }

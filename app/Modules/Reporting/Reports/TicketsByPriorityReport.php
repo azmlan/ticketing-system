@@ -29,8 +29,8 @@ class TicketsByPriorityReport extends BaseReport implements ReportInterface
             ->orderByRaw('COUNT(*) DESC')
             ->get()
             ->map(fn ($row) => [
-                'priority' => $row->priority ? __('tickets.priority.' . $row->priority) : __('reports.labels.none'),
-                'count'    => $row->count,
+                'priority' => $row->priority ? __('tickets.priority.'.$row->priority) : __('reports.labels.none'),
+                'count' => $row->count,
             ]);
     }
 }

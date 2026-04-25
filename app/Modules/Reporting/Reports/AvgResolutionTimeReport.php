@@ -61,9 +61,9 @@ class AvgResolutionTimeReport extends BaseReport implements ReportInterface
             ->orderBy('period')
             ->get()
             ->map(fn ($row) => [
-                'period'    => $row->period,
+                'period' => $row->period,
                 'avg_hours' => $row->avg_hours !== null ? round((float) $row->avg_hours, 1) : 0.0,
-                'count'     => (int) $row->count,
+                'count' => (int) $row->count,
             ]);
     }
 }

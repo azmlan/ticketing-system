@@ -30,7 +30,7 @@ class TicketVolumeReport extends BaseReport implements ReportInterface
             ->get()
             ->map(fn ($row) => [
                 'period' => $row->period,
-                'count'  => $row->count,
+                'count' => $row->count,
             ]);
     }
 }

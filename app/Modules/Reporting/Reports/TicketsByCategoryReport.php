@@ -34,7 +34,7 @@ class TicketsByCategoryReport extends BaseReport implements ReportInterface
             ->get()
             ->map(fn ($row) => [
                 'category' => $row->category,
-                'count'    => $row->count,
+                'count' => $row->count,
             ]);
     }
 }

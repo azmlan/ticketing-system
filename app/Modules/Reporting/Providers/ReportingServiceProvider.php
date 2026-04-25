@@ -19,7 +19,7 @@ class ReportingServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadTranslationsFrom(base_path('resources/lang'), 'reports');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/web.php');
+        $this->loadRoutesFrom(__DIR__.'/../Routes/web.php');
 
         Livewire::component('reports.report-page', ReportPage::class);
     }

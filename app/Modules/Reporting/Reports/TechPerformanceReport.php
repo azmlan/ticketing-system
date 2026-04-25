@@ -60,13 +60,13 @@ class TechPerformanceReport extends BaseReport implements ReportInterface
             ->orderByRaw('COUNT(tickets.id) DESC')
             ->get()
             ->map(fn ($row) => [
-                'tech_name'          => $row->tech_name,
-                'resolved_count'     => (int) $row->resolved_count,
-                'avg_csat'           => $row->avg_csat !== null
+                'tech_name' => $row->tech_name,
+                'resolved_count' => (int) $row->resolved_count,
+                'avg_csat' => $row->avg_csat !== null
                     ? round((float) $row->avg_csat, 1)
                     : $none,
                 'sla_compliance_pct' => $row->sla_compliance_pct !== null
-                    ? number_format((float) $row->sla_compliance_pct, 1) . '%'
+                    ? number_format((float) $row->sla_compliance_pct, 1).'%'
                     : $none,
             ]);
     }

@@ -45,10 +45,10 @@ class EscalationSummaryReport extends BaseReport implements ReportInterface
             ->orderBy('period')
             ->get()
             ->map(fn ($row) => [
-                'period'    => $row->period,
+                'period' => $row->period,
                 'triggered' => (int) $row->triggered,
-                'approved'  => (int) $row->approved,
-                'rejected'  => (int) $row->rejected,
+                'approved' => (int) $row->approved,
+                'rejected' => (int) $row->rejected,
             ]);
     }
 }

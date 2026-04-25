@@ -24,12 +24,12 @@ class CsatByTechReport extends BaseReport implements ReportInterface
         $query = DB::table('csat_ratings')
             ->join('users', 'users.id', '=', 'csat_ratings.tech_id')
             ->join('tickets', 'tickets.id', '=', 'csat_ratings.ticket_id')
-            ->selectRaw("
+            ->selectRaw('
                 users.full_name as tech_name,
                 COUNT(*) as rating_count,
                 AVG(csat_ratings.rating) as avg_rating,
                 MIN(csat_ratings.rating) as lowest_rating
-            ")
+            ')
             ->whereNull('tickets.deleted_at')
             ->where('csat_ratings.status', 'submitted');
 
@@ -59,9 +59,9 @@ class CsatByTechReport extends BaseReport implements ReportInterface
             ->orderByRaw('AVG(csat_ratings.rating) ASC')
             ->get()
             ->map(fn ($row) => [
-                'tech_name'     => $row->tech_name,
-                'rating_count'  => (int) $row->rating_count,
-                'avg_rating'    => $row->avg_rating !== null
+                'tech_name' => $row->tech_name,
+                'rating_count' => (int) $row->rating_count,
+                'avg_rating' => $row->avg_rating !== null
                     ? round((float) $row->avg_rating, 1)
                     : $none,
                 'lowest_rating' => $row->lowest_rating !== null

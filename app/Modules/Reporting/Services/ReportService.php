@@ -10,8 +10,8 @@ use App\Modules\Reporting\Reports\CsatOverviewReport;
 use App\Modules\Reporting\Reports\EscalationSummaryReport;
 use App\Modules\Reporting\Reports\SlaBreachesReport;
 use App\Modules\Reporting\Reports\SlaComplianceReport;
-use App\Modules\Reporting\Reports\TechPerformanceReport;
 use App\Modules\Reporting\Reports\TeamWorkloadReport;
+use App\Modules\Reporting\Reports\TechPerformanceReport;
 use App\Modules\Reporting\Reports\TicketsByCategoryReport;
 use App\Modules\Reporting\Reports\TicketsByPriorityReport;
 use App\Modules\Reporting\Reports\TicketsByStatusReport;
@@ -22,18 +22,18 @@ use InvalidArgumentException;
 class ReportService implements ReportServiceInterface
 {
     private array $registry = [
-        'ticket_volume'       => TicketVolumeReport::class,
-        'tickets_by_status'   => TicketsByStatusReport::class,
+        'ticket_volume' => TicketVolumeReport::class,
+        'tickets_by_status' => TicketsByStatusReport::class,
         'tickets_by_category' => TicketsByCategoryReport::class,
         'tickets_by_priority' => TicketsByPriorityReport::class,
         'avg_resolution_time' => AvgResolutionTimeReport::class,
-        'tech_performance'    => TechPerformanceReport::class,
-        'team_workload'       => TeamWorkloadReport::class,
-        'escalation_summary'  => EscalationSummaryReport::class,
-        'sla_compliance'      => SlaComplianceReport::class,
-        'sla_breaches'        => SlaBreachesReport::class,
-        'csat_overview'       => CsatOverviewReport::class,
-        'csat_by_tech'        => CsatByTechReport::class,
+        'tech_performance' => TechPerformanceReport::class,
+        'team_workload' => TeamWorkloadReport::class,
+        'escalation_summary' => EscalationSummaryReport::class,
+        'sla_compliance' => SlaComplianceReport::class,
+        'sla_breaches' => SlaBreachesReport::class,
+        'csat_overview' => CsatOverviewReport::class,
+        'csat_by_tech' => CsatByTechReport::class,
     ];
 
     public function run(string $type, array $filters): Collection

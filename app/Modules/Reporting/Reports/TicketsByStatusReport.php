@@ -29,8 +29,8 @@ class TicketsByStatusReport extends BaseReport implements ReportInterface
             ->orderByRaw('COUNT(*) DESC')
             ->get()
             ->map(fn ($row) => [
-                'status' => __('tickets.status.' . $row->status),
-                'count'  => $row->count,
+                'status' => __('tickets.status.'.$row->status),
+                'count' => $row->count,
             ]);
     }
 }

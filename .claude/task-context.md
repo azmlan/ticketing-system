@@ -53,6 +53,10 @@ docker compose exec app php artisan ...
 - ✅ **7.1** — csat_ratings migration/model/factory; CsatExpireCommand; HandleCsatOnResolution listener; CsatPromptModal + CsatRatingSection Livewire; CsatServiceProvider; 47 tests
 - ✅ **7.2** — TicketResolvedMail (ShouldQueue, locale-aware, tech name, no survey URL); listener dispatches on first creation; ar+en csat.email.* keys; 7 tests
 - ✅ **7.3** — Reporting module: ReportInterface, ReportServiceInterface, BaseReport, TicketVolumeReport, TicketsByStatusReport, TicketsByCategoryReport, TicketsByPriorityReport, ReportService, ReportPage Livewire (#[Layout]), routes, ar+en reports.php; Pest.php updated; 22 tests (6 unit + 16 feature)
+- ✅ **7.4** — Performance bundle: AvgResolutionTimeReport (resolved_at filter axis, SQLite/MySQL compatible), TechPerformanceReport (resolved count + avg CSAT + SLA compliance %), TeamWorkloadReport (open non-terminal tickets per tech), EscalationSummaryReport (condition_reports triggered/approved/rejected per day); ReportService registry + ar+en translations updated; 40 tests (28 unit + 12 feature)
+- ✅ **7.5** — SLA + CSAT bundle: SlaComplianceReport (% within SLA by priority, warning=within SLA, critical-first sort), SlaBreachesReport (breached tickets with tech + target vs actual hours), CsatOverviewReport (avg rating + response rate + per-star distribution by date), CsatByTechReport (avg + count + lowest rating per tech, ordered by avg ASC); ReportService now has all 12 types; ar+en translations updated; 40 tests (28 unit + 12 feature)
+- ✅ **7.6** — Synchronous export: ExportService (23-column JOIN query — standard + SLA + CSAT + dynamic custom fields with Schema::hasTable guard), CsvWriter (UTF-8 BOM + fputcsv streamed), XlsxWriter (phpspreadsheet, bold headers, auto-size, temp file), ExportController (permission-gated GET /reports/export?format=csv|xlsx), CSV/XLSX buttons on report page forwarding live filter state; 19 feature tests; new package: phpoffice/phpspreadsheet ^5.7
+- ✅ **7.7** — Queued export via Horizon: notifications + ticket_exports migrations; TicketExport model (ULID PK, filters JSON, include_csat flag, status pending/ready/failed); ExportTicketsJob (ShouldQueue, writes CSV/XLSX to local disk at exports/{ulid}.{ext}, fires ExportReadyNotification via database + mail); ExportController::download() (ownership check, 404 on missing file, deleteFileAfterSend); queueExport() Livewire action (dispatches job, sets exportQueued flag); ExportService + ExportController updated to gate CSAT columns on is_super_user or ticket.view-all; 21 tests (ExportTicketsJobTest + ExportColumnTest)
 
 ## Key file locations (phase 7)
 
@@ -78,22 +82,45 @@ app/Modules/Reporting/
   Reports/TicketsByStatusReport.php      ← GROUP BY status
   Reports/TicketsByCategoryReport.php    ← LEFT JOIN categories, GROUP BY category
   Reports/TicketsByPriorityReport.php    ← GROUP BY priority
-  Services/ReportService.php             ← registry, run(), headers(), types()
-  Livewire/ReportPage.php                ← #[Layout], permission gate, filter state
+  Reports/AvgResolutionTimeReport.php    ← date filter on resolved_at; avg hours
+  Reports/TechPerformanceReport.php      ← resolved count + avg CSAT + SLA compliance %
+  Reports/TeamWorkloadReport.php         ← open (non-terminal) tickets per tech
+  Reports/EscalationSummaryReport.php    ← condition_reports triggered/approved/rejected per day
+  Reports/SlaComplianceReport.php        ← % within SLA by priority (warning=within, critical-first sort)
+  Reports/SlaBreachesReport.php          ← breached tickets with tech + target vs actual hours
+  Reports/CsatOverviewReport.php         ← avg rating + response rate + star distribution by date
+  Reports/CsatByTechReport.php           ← avg + count + lowest rating per tech (ordered by avg ASC)
+  Services/ReportService.php             ← registry (12 types), run(), headers(), types()
+  Models/TicketExport.php                ← ULID PK, filters JSON, include_csat, status, expires_at
+  Jobs/ExportTicketsJob.php              ← ShouldQueue; writes to local disk; fires ExportReadyNotification
+  Notifications/ExportReadyNotification.php ← database + mail via; toDatabase/toMail
+  Services/ExportService.php             ← exportHeaders(bool includeCsat) + exportRows(filters, includeCsat)
+  Writers/CsvWriter.php                  ← UTF-8 BOM + fputcsv streamed download
+  Writers/XlsxWriter.php                 ← phpspreadsheet, bold header, auto-size; writeTempFile() for job
+  Controllers/ExportController.php       ← export() + download(); CSAT gated on ticket.view-all
+  Livewire/ReportPage.php                ← queueExport(format) Livewire action; exportQueued flag
   Providers/ReportingServiceProvider.php
-  Routes/web.php                         ← GET /reports → reports.index
+  Routes/web.php                         ← GET /reports + GET /reports/export + GET /reports/exports/{export}/download
 
-resources/lang/{ar,en}/reports.php      ← types/filters/columns/labels/validation
+resources/lang/{ar,en}/reports.php      ← types/filters/columns/labels/validation + export.* section
 resources/lang/{ar,en}/csat.php         ← email.* section added
-resources/views/livewire/reports/report-page.blade.php
+resources/views/livewire/reports/report-page.blade.php  ← CSV + XLSX download buttons
 
-tests/Unit/Reporting/TicketVolumeReportTest.php   ← 6 tests
-tests/Feature/Reporting/ReportPageTest.php         ← 16 tests
-tests/Feature/CSAT/TicketResolvedMailTest.php      ← 7 tests
+tests/Unit/Reporting/TicketVolumeReportTest.php        ← 6 tests
+tests/Unit/Reporting/SlaComplianceReportTest.php       ← 7 tests
+tests/Unit/Reporting/SlaBreachesReportTest.php         ← 7 tests
+tests/Unit/Reporting/CsatOverviewReportTest.php        ← 7 tests
+tests/Unit/Reporting/CsatByTechReportTest.php          ← 7 tests
+tests/Feature/Reporting/ReportPageTest.php             ← 16 tests
+tests/Feature/Reporting/SlaCsatBundleReportPageTest.php ← 12 tests
+tests/Feature/Reporting/ExportTest.php                 ← 19 tests (updated: CSAT tests now use super user)
+tests/Feature/Export/ExportTicketsJobTest.php          ← 11 tests
+tests/Feature/Export/ExportColumnTest.php              ← 8 tests (1 skipped — custom_fields not yet seeded)
+tests/Feature/CSAT/TicketResolvedMailTest.php          ← 7 tests
 ```
 
-## Test count (after phase-7 task 7.3)
-**684 passed, 43 skipped (MySQL-only schema checks), 0 failed**
+## Test count (after phase-7 task 7.7)
+**801 passed, 44 skipped (MySQL-only schema checks), 0 failed**
 
 ## Notes
 - Reporting queries use `DB::table('tickets')` to bypass EmployeeTicketScope — always system-wide

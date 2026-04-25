@@ -41,11 +41,11 @@ class SlaComplianceReport extends BaseReport implements ReportInterface
             ->sortBy(fn ($row) => $priorityOrder[$row->priority] ?? 99)
             ->values()
             ->map(fn ($row) => [
-                'priority'         => $row->priority ? __('tickets.priority.' . $row->priority) : $none,
-                'total_count'      => (int) $row->total_count,
+                'priority' => $row->priority ? __('tickets.priority.'.$row->priority) : $none,
+                'total_count' => (int) $row->total_count,
                 'within_sla_count' => (int) $row->within_sla_count,
-                'compliance_pct'   => $row->compliance_pct !== null
-                    ? number_format((float) $row->compliance_pct, 1) . '%'
+                'compliance_pct' => $row->compliance_pct !== null
+                    ? number_format((float) $row->compliance_pct, 1).'%'
                     : $none,
             ]);
     }
