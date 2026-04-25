@@ -10,6 +10,8 @@ use App\Modules\Admin\Livewire\Locations\LocationIndex;
 use App\Modules\Admin\Livewire\ResponseTemplates\ResponseTemplateIndex;
 use App\Modules\Admin\Livewire\Sla\SlaSettingsIndex;
 use App\Modules\Admin\Livewire\Tags\TagIndex;
+use App\Modules\Admin\Livewire\Users\UserDetail;
+use App\Modules\Admin\Livewire\Users\UserList;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -60,5 +62,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::middleware('can:system.manage-locations')->group(function () {
         Route::get('/locations', LocationIndex::class)->name('locations.index');
     });
+
+    // ── Users ─────────────────────────────────────────────────────────────────
+    // OR logic (user.promote OR user.manage-permissions) handled in component mount()
+    Route::get('/users', UserList::class)->name('users.index');
+    Route::get('/users/{user}', UserDetail::class)->name('users.show');
 
 });
