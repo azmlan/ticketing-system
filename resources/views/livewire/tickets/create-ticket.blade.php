@@ -45,6 +45,36 @@
             </div>
         @endif
 
+        {{-- Department --}}
+        @if ($departments->isNotEmpty())
+        <div class="mb-4">
+            <label for="department_id" class="block text-sm font-medium text-gray-700 mb-1">{{ __('tickets.create.department') }}</label>
+            <select id="department_id" wire:model="department_id"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value="">{{ __('tickets.select_department') }}</option>
+                @foreach ($departments as $dept)
+                    <option value="{{ $dept->id }}">{{ $dept->localizedName() }}</option>
+                @endforeach
+            </select>
+            @error('department_id') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+        </div>
+        @endif
+
+        {{-- Location --}}
+        @if ($locations->isNotEmpty())
+        <div class="mb-4">
+            <label for="location_id" class="block text-sm font-medium text-gray-700 mb-1">{{ __('tickets.create.location') }}</label>
+            <select id="location_id" wire:model="location_id"
+                    class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value="">{{ __('tickets.select_location') }}</option>
+                @foreach ($locations as $loc)
+                    <option value="{{ $loc->id }}">{{ $loc->localizedName() }}</option>
+                @endforeach
+            </select>
+            @error('location_id') <span class="text-red-600 text-sm">{{ $message }}</span> @enderror
+        </div>
+        @endif
+
         {{-- Custom Fields --}}
         @if ($customFields->isNotEmpty())
             <div class="mb-4 space-y-4">

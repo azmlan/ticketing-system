@@ -6,6 +6,8 @@ use App\Modules\Admin\Models\Category;
 use App\Modules\Admin\Models\CustomField;
 use App\Modules\Admin\Models\CustomFieldValue;
 use App\Modules\Admin\Models\Subcategory;
+use App\Modules\Shared\Models\Department;
+use App\Modules\Shared\Models\Location;
 use App\Modules\Tickets\Enums\TicketStatus;
 use App\Modules\Tickets\Events\TicketStatusChanged;
 use App\Modules\Tickets\Models\Ticket;
@@ -32,6 +34,10 @@ class CreateTicket extends Component
     public string $category_id = '';
 
     public string $subcategory_id = '';
+
+    public string $department_id = '';
+
+    public string $location_id = '';
 
     /** @var array<int, TemporaryUploadedFile> */
     public array $attachments = [];
@@ -97,6 +103,8 @@ class CreateTicket extends Component
             'group_id' => $category->group_id,
             'requester_id' => $user->id,
             'incident_origin' => 'web',
+            'department_id' => $this->department_id ?: null,
+            'location_id' => $this->location_id ?: null,
         ]);
 
         RateLimiter::hit($createKey, $createDecay);
@@ -153,6 +161,8 @@ class CreateTicket extends Component
             'subject' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
             'category_id' => ['required', 'exists:categories,id'],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'location_id' => ['nullable', 'exists:locations,id'],
             'attachments' => ['array', 'max:5'],
             'attachments.*' => ['file'],
         ];
@@ -250,8 +260,10 @@ class CreateTicket extends Component
     public function render()
     {
         return view('livewire.tickets.create-ticket', [
-            'categories' => Category::active()->orderBy('sort_order')->get(),
+            'categories'   => Category::active()->orderBy('sort_order')->get(),
             'customFields' => $this->applicableCustomFields(),
+            'departments'  => Department::active()->whereNull('deleted_at')->orderBy('sort_order')->orderBy('name_en')->get(),
+            'locations'    => Location::active()->whereNull('deleted_at')->orderBy('sort_order')->orderBy('name_en')->get(),
         ]);
     }
 }

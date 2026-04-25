@@ -7,6 +7,8 @@ return [
         'description' => 'Description',
         'category'    => 'Category',
         'subcategory' => 'Subcategory',
+        'department'  => 'Department',
+        'location'    => 'Location',
         'attachments' => 'Attachments (up to 5)',
         'submit'      => 'Submit Ticket',
         'success'     => 'Ticket created successfully.',
@@ -27,6 +29,8 @@ return [
     'rate_limit_exceeded' => 'You have exceeded the ticket creation limit. Please try again later.',
     'select_category'     => 'Select a category...',
     'select_subcategory'  => 'Select a subcategory...',
+    'select_department'   => 'Select a department...',
+    'select_location'     => 'Select a location...',
 
     'status' => [
         'awaiting_assignment'     => 'Awaiting Assignment',

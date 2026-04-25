@@ -3,6 +3,7 @@
 namespace App\Modules\Shared\Models;
 
 use Database\Factories\DepartmentFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -32,6 +33,16 @@ class Department extends Model
     protected static function newFactory(): DepartmentFactory
     {
         return DepartmentFactory::new();
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function localizedName(): string
+    {
+        return app()->getLocale() === 'ar' ? $this->name_ar : $this->name_en;
     }
 
     public function users(): HasMany

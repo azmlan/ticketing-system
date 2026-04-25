@@ -7,6 +7,8 @@ return [
         'description' => 'الوصف',
         'category'    => 'التصنيف',
         'subcategory' => 'التصنيف الفرعي',
+        'department'  => 'القسم',
+        'location'    => 'الموقع',
         'attachments' => 'المرفقات (حتى 5 ملفات)',
         'submit'      => 'إرسال التذكرة',
         'success'     => 'تم إنشاء التذكرة بنجاح.',
@@ -27,6 +29,8 @@ return [
     'rate_limit_exceeded' => 'لقد تجاوزت الحد المسموح به من التذاكر. يرجى المحاولة لاحقاً.',
     'select_category'     => 'اختر التصنيف...',
     'select_subcategory'  => 'اختر التصنيف الفرعي...',
+    'select_department'   => 'اختر القسم...',
+    'select_location'     => 'اختر الموقع...',
 
     'status' => [
         'awaiting_assignment'     => 'في انتظار التعيين',

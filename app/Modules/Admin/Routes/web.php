@@ -3,8 +3,10 @@
 use App\Modules\Admin\Livewire\Categories\CategoryIndex;
 use App\Modules\Admin\Livewire\Categories\SubcategoryIndex;
 use App\Modules\Admin\Livewire\CustomFields\CustomFieldIndex;
+use App\Modules\Admin\Livewire\Departments\DepartmentIndex;
 use App\Modules\Admin\Livewire\Groups\GroupIndex;
 use App\Modules\Admin\Livewire\Groups\GroupMembersIndex;
+use App\Modules\Admin\Livewire\Locations\LocationIndex;
 use App\Modules\Admin\Livewire\ResponseTemplates\ResponseTemplateIndex;
 use App\Modules\Admin\Livewire\Sla\SlaSettingsIndex;
 use App\Modules\Admin\Livewire\Tags\TagIndex;
@@ -47,6 +49,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ── Response Templates ────────────────────────────────────────────────────
     Route::middleware('can:system.manage-response-templates')->group(function () {
         Route::get('/response-templates', ResponseTemplateIndex::class)->name('response-templates.index');
+    });
+
+    // ── Departments ───────────────────────────────────────────────────────────
+    Route::middleware('can:system.manage-departments')->group(function () {
+        Route::get('/departments', DepartmentIndex::class)->name('departments.index');
+    });
+
+    // ── Locations ─────────────────────────────────────────────────────────────
+    Route::middleware('can:system.manage-locations')->group(function () {
+        Route::get('/locations', LocationIndex::class)->name('locations.index');
     });
 
 });
