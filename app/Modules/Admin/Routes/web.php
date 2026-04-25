@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Admin\Controllers\LogoController;
 use App\Modules\Admin\Livewire\Categories\CategoryIndex;
 use App\Modules\Admin\Livewire\Categories\SubcategoryIndex;
 use App\Modules\Admin\Livewire\CustomFields\CustomFieldIndex;
@@ -8,6 +9,7 @@ use App\Modules\Admin\Livewire\Groups\GroupIndex;
 use App\Modules\Admin\Livewire\Groups\GroupMembersIndex;
 use App\Modules\Admin\Livewire\Locations\LocationIndex;
 use App\Modules\Admin\Livewire\ResponseTemplates\ResponseTemplateIndex;
+use App\Modules\Admin\Livewire\Settings\BrandingSettings;
 use App\Modules\Admin\Livewire\Sla\SlaSettingsIndex;
 use App\Modules\Admin\Livewire\Tags\TagIndex;
 use App\Modules\Admin\Livewire\Users\UserDetail;
@@ -68,4 +70,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/users', UserList::class)->name('users.index');
     Route::get('/users/{user}', UserDetail::class)->name('users.show');
 
+    // ── Branding ──────────────────────────────────────────────────────────────
+    // IT Manager only (is_super_user) — checked in component mount()
+    Route::get('/branding', BrandingSettings::class)->name('branding.index');
+
 });
+
+// ── Logo serve (no auth middleware — checked in controller) ───────────────────
+Route::get('/admin/logo', [LogoController::class, 'show'])->name('admin.logo');

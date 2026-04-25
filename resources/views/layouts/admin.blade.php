@@ -1,3 +1,9 @@
+@php
+    $brandCompanyName = \App\Modules\Admin\Models\AppSetting::get('company_name') ?: config('app.name');
+    $brandPrimary     = \App\Modules\Admin\Models\AppSetting::get('primary_color') ?: '#4f46e5';
+    $brandSecondary   = \App\Modules\Admin\Models\AppSetting::get('secondary_color') ?: '#7c3aed';
+    $brandLogoPath    = \App\Modules\Admin\Models\AppSetting::get('logo_path');
+@endphp
 <!DOCTYPE html>
 <html lang="{{ $lang ?? app()->getLocale() }}"
       dir="{{ $dir ?? (app()->getLocale() === 'ar' ? 'rtl' : 'ltr') }}">
@@ -5,7 +11,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ __('admin.admin_panel') }} — {{ config('app.name') }}</title>
+    <title>{{ __('admin.admin_panel') }} — {{ $brandCompanyName }}</title>
+    <style>
+        :root {
+            --color-primary: {{ $brandPrimary }};
+            --color-secondary: {{ $brandSecondary }};
+        }
+    </style>
     @if(!app()->environment('testing'))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @endif
@@ -23,10 +35,13 @@
     >
         {{-- Brand --}}
         <div class="px-4 py-5 border-b border-gray-700">
-            <a href="{{ route('admin.categories.index') }}" class="text-lg font-bold tracking-wide hover:text-gray-200">
-                {{ __('admin.admin_panel') }}
+            <a href="{{ route('admin.categories.index') }}" class="flex items-center gap-2 hover:opacity-90">
+                @if($brandLogoPath)
+                    <img src="{{ route('admin.logo') }}" alt="{{ $brandCompanyName }}" class="h-7 w-auto rounded">
+                @endif
+                <span class="text-lg font-bold tracking-wide text-white">{{ $brandCompanyName }}</span>
             </a>
-            <p class="text-xs text-gray-400 mt-1">{{ config('app.name') }}</p>
+            <p class="text-xs text-gray-400 mt-1">{{ __('admin.admin_panel') }}</p>
         </div>
 
         {{-- Navigation --}}
@@ -144,8 +159,9 @@
             @endpermission
 
             @if(auth()->user()?->is_super_user)
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-700 rounded-md mx-2">
+            <a href="{{ route('admin.branding.index') }}"
+               class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-700 rounded-md mx-2
+                      {{ request()->routeIs('admin.branding*') ? 'bg-gray-700' : '' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42"/>
                 </svg>

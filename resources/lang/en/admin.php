@@ -325,6 +325,27 @@ return [
         'it_manager_note'     => 'IT Manager role is assigned at deployment time only and cannot be changed through this interface.',
     ],
 
+    // ── Branding & Settings ───────────────────────────────────────────────────
+    'branding' => [
+        'title'                      => 'Branding & Settings',
+        'identity_section'           => 'Company Identity',
+        'logo_section'               => 'Logo',
+        'session_section'            => 'Session Configuration',
+        'company_name'               => 'Company Name',
+        'company_name_placeholder'   => 'e.g. Riyadh School District',
+        'primary_color'              => 'Primary Color',
+        'secondary_color'            => 'Secondary Color',
+        'logo'                       => 'Upload Logo',
+        'logo_hint'                  => 'Image only (JPEG, PNG, GIF, WEBP). Max 2 MB. Resized to 256 px.',
+        'logo_invalid_mime'          => 'Uploaded file is not a valid image.',
+        'current_logo'               => 'Current Logo',
+        'no_logo'                    => 'No logo uploaded.',
+        'session_timeout_hours'      => 'Session Timeout (hours)',
+        'session_timeout_hint'       => 'Users will be logged out after this many hours of inactivity (1–24).',
+        'save'                       => 'Save Settings',
+        'saved'                      => 'Settings saved successfully.',
+    ],
+
     // ── Shared ────────────────────────────────────────────────────────────────
     'actions'            => 'Actions',
     'edit'               => 'Edit',
