@@ -1,0 +1,76 @@
+<?php
+
+return [
+
+    // ── Navigation ────────────────────────────────────────────────────────────
+    'nav_categories'           => 'Categories',
+    'nav_groups'               => 'Groups',
+    'nav_custom_fields'        => 'Custom Fields',
+    'nav_sla'                  => 'SLA Targets',
+    'nav_tags'                 => 'Tags',
+    'nav_response_templates'   => 'Response Templates',
+    'nav_departments'          => 'Departments',
+    'nav_locations'            => 'Locations',
+    'nav_users'                => 'Users',
+    'nav_notifications'        => 'Notification Settings',
+    'nav_branding'             => 'Branding & Settings',
+    'admin_panel'              => 'Admin Panel',
+
+    // ── Categories ────────────────────────────────────────────────────────────
+    'categories' => [
+        'title'                => 'Categories',
+        'create'               => 'New Category',
+        'edit'                 => 'Edit Category',
+        'name_ar'              => 'Name (Arabic)',
+        'name_en'              => 'Name (English)',
+        'group'                => 'Group',
+        'select_group'         => 'Select a group…',
+        'is_active'            => 'Active',
+        'save'                 => 'Save',
+        'cancel'               => 'Cancel',
+        'created'              => 'Category created successfully.',
+        'updated'              => 'Category updated successfully.',
+        'deleted'              => 'Category deleted.',
+        'deactivated'          => 'Category deactivated.',
+        'activated'            => 'Category activated.',
+        'confirm_delete'       => 'Are you sure you want to delete this category?',
+        'no_results'           => 'No categories found.',
+        'version'              => 'Version',
+        'subcategories_link'   => 'Subcategories',
+        'search_placeholder'   => 'Search by name…',
+    ],
+
+    // ── Subcategories ─────────────────────────────────────────────────────────
+    'subcategories' => [
+        'title'                => 'Subcategories',
+        'back'                 => 'Back to Categories',
+        'create'               => 'New Subcategory',
+        'edit'                 => 'Edit Subcategory',
+        'name_ar'              => 'Name (Arabic)',
+        'name_en'              => 'Name (English)',
+        'is_required'          => 'Required',
+        'is_required_hint'     => 'Requester must select this subcategory.',
+        'is_active'            => 'Active',
+        'save'                 => 'Save',
+        'cancel'               => 'Cancel',
+        'created'              => 'Subcategory created successfully.',
+        'updated'              => 'Subcategory updated successfully.',
+        'deleted'              => 'Subcategory deleted.',
+        'deactivated'          => 'Subcategory deactivated.',
+        'activated'            => 'Subcategory activated.',
+        'confirm_delete'       => 'Are you sure you want to delete this subcategory?',
+        'no_results'           => 'No subcategories found.',
+        'version'              => 'Version',
+        'search_placeholder'   => 'Search by name…',
+    ],
+
+    // ── Shared ────────────────────────────────────────────────────────────────
+    'actions'            => 'Actions',
+    'edit'               => 'Edit',
+    'delete'             => 'Delete',
+    'activate'           => 'Activate',
+    'deactivate'         => 'Deactivate',
+    'status_active'      => 'Active',
+    'status_inactive'    => 'Inactive',
+    'unauthorized'       => 'You do not have permission to access this section.',
+];
