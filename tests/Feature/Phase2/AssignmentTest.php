@@ -97,7 +97,8 @@ it('group manager can assign a tech within their group', function () {
 
     Livewire::actingAs($manager)
         ->test(ShowTicket::class, ['ticket' => $ticket])
-        ->call('managerAssign', $tech->id)
+        ->set('assignToUserId', $tech->id)
+        ->call('managerAssign')
         ->assertHasNoErrors();
 
     expect($ticket->fresh())
@@ -115,7 +116,8 @@ it('group manager cannot assign to tech outside their group (403)', function () 
 
     Livewire::actingAs($manager)
         ->test(ShowTicket::class, ['ticket' => $ticket])
-        ->call('managerAssign', $tech->id)
+        ->set('assignToUserId', $tech->id)
+        ->call('managerAssign')
         ->assertForbidden();
 });
 
@@ -127,7 +129,8 @@ it('IT manager (is_super_user) can assign across groups', function () {
 
     Livewire::actingAs($itManager)
         ->test(ShowTicket::class, ['ticket' => $ticket])
-        ->call('managerAssign', $tech->id)
+        ->set('assignToUserId', $tech->id)
+        ->call('managerAssign')
         ->assertHasNoErrors();
 
     expect($ticket->fresh())
@@ -145,7 +148,8 @@ it('user with ticket.assign permission can assign across groups', function () {
 
     Livewire::actingAs($assignManager)
         ->test(ShowTicket::class, ['ticket' => $ticket])
-        ->call('managerAssign', $tech->id)
+        ->set('assignToUserId', $tech->id)
+        ->call('managerAssign')
         ->assertHasNoErrors();
 
     expect($ticket->fresh())
@@ -163,7 +167,8 @@ it('TicketStatusChanged event is fired on manager assign', function () {
 
     Livewire::actingAs($itManager)
         ->test(ShowTicket::class, ['ticket' => $ticket])
-        ->call('managerAssign', $tech->id);
+        ->set('assignToUserId', $tech->id)
+        ->call('managerAssign');
 
     Event::assertDispatched(TicketStatusChanged::class);
 });

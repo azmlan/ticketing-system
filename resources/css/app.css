@@ -6,6 +6,57 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  /* Primary — deep governmental blue */
+  --color-primary-50:  #EBF0F8;
+  --color-primary-100: #C8D6EE;
+  --color-primary-200: #A5BCE3;
+  --color-primary-300: #7EA0D5;
+  --color-primary-400: #4D7ABF;
+  --color-primary-500: #1B3A6B;
+  --color-primary-600: #153060;
+  --color-primary-700: #0F2550;
+  --color-primary-800: #0A1A3A;
+  --color-primary-900: #050E22;
+
+  /* Surface / background tokens */
+  --color-surface-base: #F5F6F8;
+  --color-surface:      #FFFFFF;
+  --color-surface-alt:  #F0F2F5;
+
+  /* Border tokens */
+  --color-border:        #D4D8DF;
+  --color-border-strong: #B0B7C3;
+
+  /* Text tokens */
+  --color-text-base:      #1A1F2E;
+  --color-text-secondary: #4A5568;
+  --color-text-muted:     #718096;
+
+  /* Semantic */
+  --color-success: #16A34A;
+  --color-warning: #D97706;
+  --color-danger:  #DC2626;
+  --color-info:    #1D4ED8;
+
+  /* Ticket status */
+  --color-status-awaiting:   #6B7280;
+  --color-status-inprogress: #1D4ED8;
+  --color-status-onhold:     #D97706;
+  --color-status-review:     #7C3AED;
+  --color-status-approval:   #0891B2;
+  --color-status-action:     #DC2626;
+  --color-status-resolved:   #16A34A;
+  --color-status-closed:     #374151;
+  --color-status-cancelled:  #9CA3AF;
+
+  /* Priority */
+  --color-priority-low:      #6B7280;
+  --color-priority-medium:   #D97706;
+  --color-priority-high:     #DC2626;
+  --color-priority-critical: #7F1D1D;
 }
+
+[x-cloak] { display: none !important; }
+
+[dir="rtl"] { font-family: 'IBM Plex Arabic', 'Noto Kufi Arabic', serif; }
+[dir="ltr"] { font-family: 'IBM Plex Sans', sans-serif; }
