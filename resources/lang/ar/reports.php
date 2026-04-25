@@ -12,6 +12,10 @@ return [
         'tech_performance'    => 'أداء الفنيين',
         'team_workload'       => 'عبء عمل الفريق',
         'escalation_summary'  => 'ملخص التصعيدات',
+        'sla_compliance'      => 'الالتزام بـ SLA',
+        'sla_breaches'        => 'انتهاكات SLA',
+        'csat_overview'       => 'نظرة عامة على CSAT',
+        'csat_by_tech'        => 'CSAT حسب الفني',
     ],
 
     'filters' => [
@@ -42,6 +46,21 @@ return [
         'triggered'          => 'المُطلقة',
         'approved'           => 'الموافق عليها',
         'rejected'           => 'المرفوضة',
+        'total_count'        => 'الإجمالي',
+        'within_sla_count'   => 'ضمن SLA',
+        'compliance_pct'     => 'نسبة الالتزام',
+        'target_hours'       => 'الهدف (ساعة)',
+        'actual_hours'       => 'الفعلي (ساعة)',
+        'submitted_count'    => 'المُقدَّمة',
+        'response_rate'      => 'معدل الاستجابة',
+        'avg_rating'         => 'متوسط التقييم',
+        'rating_1'           => 'نجمة واحدة',
+        'rating_2'           => 'نجمتان',
+        'rating_3'           => '3 نجوم',
+        'rating_4'           => '4 نجوم',
+        'rating_5'           => '5 نجوم',
+        'rating_count'       => 'التقييمات',
+        'lowest_rating'      => 'أقل تقييم',
     ],
 
     'labels' => [

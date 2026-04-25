@@ -12,6 +12,10 @@ return [
         'tech_performance'    => 'Tech Performance',
         'team_workload'       => 'Team Workload',
         'escalation_summary'  => 'Escalation Summary',
+        'sla_compliance'      => 'SLA Compliance',
+        'sla_breaches'        => 'SLA Breaches',
+        'csat_overview'       => 'CSAT Overview',
+        'csat_by_tech'        => 'CSAT by Tech',
     ],
 
     'filters' => [
@@ -42,6 +46,21 @@ return [
         'triggered'          => 'Triggered',
         'approved'           => 'Approved',
         'rejected'           => 'Rejected',
+        'total_count'        => 'Total',
+        'within_sla_count'   => 'Within SLA',
+        'compliance_pct'     => 'Compliance %',
+        'target_hours'       => 'Target (hrs)',
+        'actual_hours'       => 'Actual (hrs)',
+        'submitted_count'    => 'Submitted',
+        'response_rate'      => 'Response Rate',
+        'avg_rating'         => 'Avg Rating',
+        'rating_1'           => '1 Star',
+        'rating_2'           => '2 Stars',
+        'rating_3'           => '3 Stars',
+        'rating_4'           => '4 Stars',
+        'rating_5'           => '5 Stars',
+        'rating_count'       => 'Ratings',
+        'lowest_rating'      => 'Lowest Rating',
     ],
 
     'labels' => [

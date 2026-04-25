@@ -5,7 +5,11 @@ namespace App\Modules\Reporting\Services;
 use App\Modules\Reporting\Contracts\ReportInterface;
 use App\Modules\Reporting\Contracts\ReportServiceInterface;
 use App\Modules\Reporting\Reports\AvgResolutionTimeReport;
+use App\Modules\Reporting\Reports\CsatByTechReport;
+use App\Modules\Reporting\Reports\CsatOverviewReport;
 use App\Modules\Reporting\Reports\EscalationSummaryReport;
+use App\Modules\Reporting\Reports\SlaBreachesReport;
+use App\Modules\Reporting\Reports\SlaComplianceReport;
 use App\Modules\Reporting\Reports\TechPerformanceReport;
 use App\Modules\Reporting\Reports\TeamWorkloadReport;
 use App\Modules\Reporting\Reports\TicketsByCategoryReport;
@@ -26,6 +30,10 @@ class ReportService implements ReportServiceInterface
         'tech_performance'    => TechPerformanceReport::class,
         'team_workload'       => TeamWorkloadReport::class,
         'escalation_summary'  => EscalationSummaryReport::class,
+        'sla_compliance'      => SlaComplianceReport::class,
+        'sla_breaches'        => SlaBreachesReport::class,
+        'csat_overview'       => CsatOverviewReport::class,
+        'csat_by_tech'        => CsatByTechReport::class,
     ];
 
     public function run(string $type, array $filters): Collection
