@@ -7,6 +7,7 @@ use App\Modules\Admin\Models\Category;
 use App\Modules\Admin\Models\CustomFieldValue;
 use App\Modules\Admin\Models\Group;
 use App\Modules\Admin\Models\Subcategory;
+use App\Modules\Admin\Models\Tag;
 use App\Modules\Shared\Models\User;
 use App\Modules\Tickets\Enums\TicketPriority;
 use App\Modules\Tickets\Enums\TicketStatus;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -103,5 +105,10 @@ class Ticket extends Model
     public function customFieldValues(): HasMany
     {
         return $this->hasMany(CustomFieldValue::class, 'ticket_id');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'ticket_tag');
     }
 }

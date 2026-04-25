@@ -5,7 +5,9 @@ use App\Modules\Admin\Livewire\Categories\SubcategoryIndex;
 use App\Modules\Admin\Livewire\CustomFields\CustomFieldIndex;
 use App\Modules\Admin\Livewire\Groups\GroupIndex;
 use App\Modules\Admin\Livewire\Groups\GroupMembersIndex;
+use App\Modules\Admin\Livewire\ResponseTemplates\ResponseTemplateIndex;
 use App\Modules\Admin\Livewire\Sla\SlaSettingsIndex;
+use App\Modules\Admin\Livewire\Tags\TagIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -35,6 +37,16 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ── SLA Settings ──────────────────────────────────────────────────────────
     Route::middleware('can:system.manage-sla')->group(function () {
         Route::get('/sla-settings', SlaSettingsIndex::class)->name('sla.settings');
+    });
+
+    // ── Tags ──────────────────────────────────────────────────────────────────
+    Route::middleware('can:system.manage-tags')->group(function () {
+        Route::get('/tags', TagIndex::class)->name('tags.index');
+    });
+
+    // ── Response Templates ────────────────────────────────────────────────────
+    Route::middleware('can:system.manage-response-templates')->group(function () {
+        Route::get('/response-templates', ResponseTemplateIndex::class)->name('response-templates.index');
     });
 
 });
