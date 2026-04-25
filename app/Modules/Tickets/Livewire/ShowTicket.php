@@ -2,6 +2,8 @@
 
 namespace App\Modules\Tickets\Livewire;
 
+use App\Modules\Admin\Models\CustomFieldOption;
+use App\Modules\Admin\Models\CustomFieldValue;
 use App\Modules\Assignment\Services\AssignmentService;
 use App\Modules\Assignment\Services\TransferService;
 use App\Modules\Shared\Models\User;
@@ -9,6 +11,7 @@ use App\Modules\Tickets\Exceptions\InvalidTicketTransitionException;
 use App\Modules\Tickets\Models\Ticket;
 use App\Modules\Tickets\Models\TransferRequest;
 use App\Modules\Tickets\Services\TicketStateMachine;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
@@ -101,6 +104,7 @@ class ShowTicket extends Component
             $this->ticket->close_reason = null;
             $this->ticket->close_reason_text = null;
             $this->addError('closeReason', __('tickets.validation.invalid_transition'));
+
             return;
         }
 
@@ -166,6 +170,58 @@ class ShowTicket extends Component
             ->where('ticket_id', $this->ticket->id)
             ->first();
 
-        return view('livewire.tickets.show-ticket', compact('techs', 'pendingTransfer', 'ticketSla'));
+        $customFieldEntries = $this->buildCustomFieldDisplay();
+
+        return view('livewire.tickets.show-ticket', compact(
+            'techs', 'pendingTransfer', 'ticketSla', 'customFieldEntries'
+        ));
+    }
+
+    private function buildCustomFieldDisplay(): Collection
+    {
+        $values = CustomFieldValue::with(['field' => fn ($q) => $q->withTrashed()])
+            ->where('ticket_id', $this->ticket->id)
+            ->get();
+
+        // Collect all option IDs needed for dropdown / multi_select display
+        $optionIds = $values
+            ->filter(fn ($cfv) => $cfv->field && in_array($cfv->field->field_type, ['dropdown', 'multi_select']))
+            ->flatMap(function ($cfv) {
+                if ($cfv->field->field_type === 'multi_select') {
+                    return json_decode($cfv->value, true) ?? [];
+                }
+
+                return [$cfv->value];
+            })
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $optionsMap = $optionIds
+            ? CustomFieldOption::withTrashed()->whereIn('id', $optionIds)->get()->keyBy('id')
+            : collect();
+
+        return $values
+            ->filter(fn ($cfv) => $cfv->field !== null)
+            ->map(function ($cfv) use ($optionsMap) {
+                $field = $cfv->field;
+
+                $displayValue = match ($field->field_type) {
+                    'checkbox' => $cfv->value === '1' ? __('common.yes') : __('common.no'),
+                    'dropdown' => optional($optionsMap->get($cfv->value))->localizedValue() ?? $cfv->value,
+                    'multi_select' => collect(json_decode($cfv->value, true) ?? [])
+                        ->map(fn ($id) => optional($optionsMap->get($id))->localizedValue() ?? $id)
+                        ->filter()
+                        ->join(', '),
+                    default => $cfv->value,
+                };
+
+                return [
+                    'label' => $field->localizedName(),
+                    'value' => $displayValue,
+                    'inactive' => ! $field->is_active || $field->trashed(),
+                ];
+            });
     }
 }

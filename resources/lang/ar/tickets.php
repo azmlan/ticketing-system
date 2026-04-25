@@ -65,11 +65,17 @@ return [
         ],
     ],
 
+    'custom_fields' => [
+        'select_option' => 'اختر خياراً...',
+    ],
+
     'show' => [
         'status_label'                  => 'الحالة',
         'assigned_to'                   => 'مسند إلى',
         'group'                         => 'المجموعة',
         'attachments'                   => 'المرفقات',
+        'custom_fields'                 => 'حقول إضافية',
+        'field_inactive'                => 'غير نشط',
         'select_tech'                   => 'اختر فنياً...',
         'select_close_reason'           => 'اختر سبب الإغلاق...',
         'close_reason_text_placeholder' => 'اذكر سبب الإغلاق...',

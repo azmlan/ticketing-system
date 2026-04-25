@@ -65,11 +65,17 @@ return [
         ],
     ],
 
+    'custom_fields' => [
+        'select_option' => 'Select an option...',
+    ],
+
     'show' => [
         'status_label'                => 'Status',
         'assigned_to'                 => 'Assigned To',
         'group'                       => 'Group',
         'attachments'                 => 'Attachments',
+        'custom_fields'               => 'Additional Fields',
+        'field_inactive'              => 'inactive',
         'select_tech'                 => 'Select a technician...',
         'select_close_reason'         => 'Select a close reason...',
         'close_reason_text_placeholder' => 'Describe the reason for closing...',
