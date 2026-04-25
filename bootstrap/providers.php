@@ -13,4 +13,5 @@ return [
     App\Modules\CSAT\Providers\CsatServiceProvider::class,
     App\Modules\Reporting\Providers\ReportingServiceProvider::class,
     App\Modules\Admin\Providers\AdminServiceProvider::class,
+    App\Modules\Precedent\Providers\PrecedentServiceProvider::class,
 ];
