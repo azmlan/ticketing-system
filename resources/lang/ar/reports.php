@@ -8,6 +8,10 @@ return [
         'tickets_by_status'   => 'التذاكر حسب الحالة',
         'tickets_by_category' => 'التذاكر حسب الفئة',
         'tickets_by_priority' => 'التذاكر حسب الأولوية',
+        'avg_resolution_time' => 'متوسط وقت الحل',
+        'tech_performance'    => 'أداء الفنيين',
+        'team_workload'       => 'عبء عمل الفريق',
+        'escalation_summary'  => 'ملخص التصعيدات',
     ],
 
     'filters' => [
@@ -24,11 +28,20 @@ return [
     ],
 
     'columns' => [
-        'period'    => 'التاريخ',
-        'count'     => 'العدد',
-        'status'    => 'الحالة',
-        'category'  => 'الفئة',
-        'priority'  => 'الأولوية',
+        'period'             => 'التاريخ',
+        'count'              => 'العدد',
+        'status'             => 'الحالة',
+        'category'           => 'الفئة',
+        'priority'           => 'الأولوية',
+        'avg_hours'          => 'متوسط ساعات الحل',
+        'tech_name'          => 'الفني',
+        'resolved_count'     => 'المحلولة',
+        'avg_csat'           => 'متوسط تقييم CSAT',
+        'sla_compliance_pct' => 'الالتزام بـ SLA',
+        'open_count'         => 'التذاكر المفتوحة',
+        'triggered'          => 'المُطلقة',
+        'approved'           => 'الموافق عليها',
+        'rejected'           => 'المرفوضة',
     ],
 
     'labels' => [

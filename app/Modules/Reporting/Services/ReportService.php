@@ -4,6 +4,10 @@ namespace App\Modules\Reporting\Services;
 
 use App\Modules\Reporting\Contracts\ReportInterface;
 use App\Modules\Reporting\Contracts\ReportServiceInterface;
+use App\Modules\Reporting\Reports\AvgResolutionTimeReport;
+use App\Modules\Reporting\Reports\EscalationSummaryReport;
+use App\Modules\Reporting\Reports\TechPerformanceReport;
+use App\Modules\Reporting\Reports\TeamWorkloadReport;
 use App\Modules\Reporting\Reports\TicketsByCategoryReport;
 use App\Modules\Reporting\Reports\TicketsByPriorityReport;
 use App\Modules\Reporting\Reports\TicketsByStatusReport;
@@ -18,6 +22,10 @@ class ReportService implements ReportServiceInterface
         'tickets_by_status'   => TicketsByStatusReport::class,
         'tickets_by_category' => TicketsByCategoryReport::class,
         'tickets_by_priority' => TicketsByPriorityReport::class,
+        'avg_resolution_time' => AvgResolutionTimeReport::class,
+        'tech_performance'    => TechPerformanceReport::class,
+        'team_workload'       => TeamWorkloadReport::class,
+        'escalation_summary'  => EscalationSummaryReport::class,
     ];
 
     public function run(string $type, array $filters): Collection

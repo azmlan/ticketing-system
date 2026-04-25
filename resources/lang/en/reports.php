@@ -8,6 +8,10 @@ return [
         'tickets_by_status'   => 'Tickets by Status',
         'tickets_by_category' => 'Tickets by Category',
         'tickets_by_priority' => 'Tickets by Priority',
+        'avg_resolution_time' => 'Avg Resolution Time',
+        'tech_performance'    => 'Tech Performance',
+        'team_workload'       => 'Team Workload',
+        'escalation_summary'  => 'Escalation Summary',
     ],
 
     'filters' => [
@@ -24,11 +28,20 @@ return [
     ],
 
     'columns' => [
-        'period'    => 'Date',
-        'count'     => 'Count',
-        'status'    => 'Status',
-        'category'  => 'Category',
-        'priority'  => 'Priority',
+        'period'             => 'Date',
+        'count'              => 'Count',
+        'status'             => 'Status',
+        'category'           => 'Category',
+        'priority'           => 'Priority',
+        'avg_hours'          => 'Avg Hours to Resolve',
+        'tech_name'          => 'Technician',
+        'resolved_count'     => 'Resolved',
+        'avg_csat'           => 'Avg CSAT',
+        'sla_compliance_pct' => 'SLA Compliance',
+        'open_count'         => 'Open Tickets',
+        'triggered'          => 'Triggered',
+        'approved'           => 'Approved',
+        'rejected'           => 'Rejected',
     ],
 
     'labels' => [
