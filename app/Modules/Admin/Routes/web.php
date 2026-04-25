@@ -2,6 +2,7 @@
 
 use App\Modules\Admin\Livewire\Categories\CategoryIndex;
 use App\Modules\Admin\Livewire\Categories\SubcategoryIndex;
+use App\Modules\Admin\Livewire\CustomFields\CustomFieldIndex;
 use App\Modules\Admin\Livewire\Groups\GroupIndex;
 use App\Modules\Admin\Livewire\Groups\GroupMembersIndex;
 use Illuminate\Support\Facades\Route;
@@ -24,5 +25,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::get('/groups/{group}/members', GroupMembersIndex::class)
         ->middleware('auth')
         ->name('groups.members');
+
+    // ── Custom Fields ─────────────────────────────────────────────────────────
+    Route::middleware('can:system.manage-custom-fields')->group(function () {
+        Route::get('/custom-fields', CustomFieldIndex::class)->name('custom-fields.index');
+    });
 
 });

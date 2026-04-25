@@ -1,4 +1,4 @@
-# Session Context — Ticketing System Phase 3 → Phase 7
+# Session Context — Ticketing System Phase 3 → Phase 8
 
 ## Branch convention
 `feature/phase-N-task-X.Y-short-name` per task
@@ -48,7 +48,7 @@ docker compose exec app php artisan ...
 - ✅ **6.5** — ManagerDashboard Livewire; 16 feature tests
 - ✅ **6.6** — Pagination + sort controls; 14 + 17 tests
 
-### Phase 7 (in progress)
+### Phase 7 (ALL DONE ✅)
 
 - ✅ **7.1** — csat_ratings migration/model/factory; CsatExpireCommand; HandleCsatOnResolution listener; CsatPromptModal + CsatRatingSection Livewire; CsatServiceProvider; 47 tests
 - ✅ **7.2** — TicketResolvedMail (ShouldQueue, locale-aware, tech name, no survey URL); listener dispatches on first creation; ar+en csat.email.* keys; 7 tests
@@ -57,6 +57,77 @@ docker compose exec app php artisan ...
 - ✅ **7.5** — SLA + CSAT bundle: SlaComplianceReport (% within SLA by priority, warning=within SLA, critical-first sort), SlaBreachesReport (breached tickets with tech + target vs actual hours), CsatOverviewReport (avg rating + response rate + per-star distribution by date), CsatByTechReport (avg + count + lowest rating per tech, ordered by avg ASC); ReportService now has all 12 types; ar+en translations updated; 40 tests (28 unit + 12 feature)
 - ✅ **7.6** — Synchronous export: ExportService (23-column JOIN query — standard + SLA + CSAT + dynamic custom fields with Schema::hasTable guard), CsvWriter (UTF-8 BOM + fputcsv streamed), XlsxWriter (phpspreadsheet, bold headers, auto-size, temp file), ExportController (permission-gated GET /reports/export?format=csv|xlsx), CSV/XLSX buttons on report page forwarding live filter state; 19 feature tests; new package: phpoffice/phpspreadsheet ^5.7
 - ✅ **7.7** — Queued export via Horizon: notifications + ticket_exports migrations; TicketExport model (ULID PK, filters JSON, include_csat flag, status pending/ready/failed); ExportTicketsJob (ShouldQueue, writes CSV/XLSX to local disk at exports/{ulid}.{ext}, fires ExportReadyNotification via database + mail); ExportController::download() (ownership check, 404 on missing file, deleteFileAfterSend); queueExport() Livewire action (dispatches job, sets exportQueued flag); ExportService + ExportController updated to gate CSAT columns on is_super_user or ticket.view-all; 21 tests (ExportTicketsJobTest + ExportColumnTest)
+
+### Phase 8 (IN PROGRESS)
+
+- ✅ **8.1 (admin shell)** — Admin layout, section navigation gated per §13.1, Categories & Subcategories CRUD with versioning, soft-delete/deactivate; commit 6bd8979
+- ✅ **8.1 (db schema)** — Migrations: custom_fields (6-type enum, scope, version, SoftDeletes), custom_field_options, custom_field_values (composite index), tags, ticket_tag pivot (no timestamps, UNIQUE), app_settings (seeded 9 defaults from §13.4); Models: CustomField, CustomFieldOption, CustomFieldValue, Tag, AppSetting (static get/set); ResponseTemplate.localizedName() added; Phase5 tests fixed for seeded app_settings; Pest.php updated for Unit/Admin; 39 new unit tests
+- ✅ **8.2** — GroupIndex Livewire (CRUD, bilingual, is_active toggle, soft-delete, gated by group.manage); GroupMembersIndex Livewire (add/remove techs via group.manage-members, set manager_id via group.manage-manager, OR-gate on mount); routes /admin/groups + /admin/groups/{group}/members; sidebar nav wired; AR+EN translations (37 keys); 29 feature tests; commit 0f4f0a3
+- ✅ **8.3** — CustomFieldIndex Livewire (list all 6 types, search, display_order reorder, toggle active, soft-delete, inline options panel for dropdown/multi_select); field_type change blocked when values exist; category-scoped fields with category dropdown; version bumps on every save; route /admin/custom-fields gated by system.manage-custom-fields; AR+EN translations (50 keys each); sidebar nav link wired; 31 feature tests (23 CRUD + 8 options)
+
+## Key file locations (phase 8 — task 8.3 custom fields)
+
+```
+app/Modules/Admin/Livewire/CustomFields/
+  CustomFieldIndex.php    ← CRUD (system.manage-custom-fields): create/edit/toggleActive/delete/reorder; inline options panel
+
+resources/views/livewire/admin/custom-fields/
+  custom-field-index.blade.php
+
+tests/Feature/Admin/CustomFieldCrudTest.php   ← 23 tests (all 6 types, versioning, type-change block, reorder)
+tests/Feature/Admin/CustomFieldOptionTest.php ← 8 tests (add/edit/delete/reorder options, active scope, 403)
+
+Routes: /admin/custom-fields (can:system.manage-custom-fields → admin.custom-fields.index)
+```
+
+## Key file locations (phase 8 — task 8.2 groups)
+
+```
+app/Modules/Admin/Livewire/Groups/
+  GroupIndex.php          ← CRUD (group.manage): create/edit/toggleActive/delete
+  GroupMembersIndex.php   ← Members (group.manage-members) + manager (group.manage-manager); OR-gate
+
+resources/views/livewire/admin/groups/
+  group-index.blade.php
+  group-members-index.blade.php
+
+tests/Feature/Admin/GroupsCrudTest.php  ← 29 tests
+
+Routes: /admin/groups (can:group.manage), /admin/groups/{group}/members (auth only; OR checked in mount)
+```
+
+## Key file locations (phase 8 — admin schema)
+
+```
+app/Modules/Admin/Models/
+  CustomField.php         ← field_type enum (6), scope_type enum, scope_category_id FK, version, SoftDeletes
+  CustomFieldOption.php   ← custom_field_id FK, bilingual value_ar/value_en, sort_order, SoftDeletes
+  CustomFieldValue.php    ← ticket_id + custom_field_id FKs, composite index (no SoftDeletes)
+  Tag.php                 ← bilingual name (100), hex color, is_active, SoftDeletes
+  AppSetting.php          ← static get(key, default) / set(key, value); seeded 9 defaults
+
+app/Modules/Communication/Models/ResponseTemplate.php  ← localizedName() added
+
+database/migrations/
+  2026_08_00_000001_create_custom_fields_table.php
+  2026_08_00_000002_create_custom_field_options_table.php
+  2026_08_00_000003_create_custom_field_values_table.php
+  2026_08_00_000004_create_tags_table.php
+  2026_08_00_000005_create_ticket_tag_table.php
+  2026_08_00_000006_create_app_settings_table.php  ← seeds 9 keys
+
+database/factories/
+  CustomFieldFactory.php       ← text(), dropdown(), categoryScoped(), inactive(), required()
+  CustomFieldOptionFactory.php
+  CustomFieldValueFactory.php
+  TagFactory.php               ← inactive()
+
+tests/Unit/Admin/
+  CustomFieldModelTest.php      ← 14 tests
+  AppSettingTest.php            ← 13 tests (incl. seed assertions)
+  TagModelTest.php              ← 8 tests (incl. pivot uniqueness)
+  ResponseTemplateModelTest.php ← 9 tests (tests Communication model)
+```
 
 ## Key file locations (phase 7)
 
@@ -119,17 +190,21 @@ tests/Feature/Export/ExportColumnTest.php              ← 8 tests (1 skipped �
 tests/Feature/CSAT/TicketResolvedMailTest.php          ← 7 tests
 ```
 
-## Test count (after phase-7 task 7.7)
-**801 passed, 44 skipped (MySQL-only schema checks), 0 failed**
+## Test count (after phase-8 task 8.3)
+**933 passed, 44 skipped (MySQL-only schema checks), 0 failed**
 
 ## Notes
 - Reporting queries use `DB::table('tickets')` to bypass EmployeeTicketScope — always system-wide
 - ReportPage aborts 403 in mount() with `is_super_user || hasPermission('system.view-reports')`
-- Pest.php updated: Feature/Reporting + Unit/Reporting added to directory lists
 - TicketResolvedMail: `$this->locale()` in constructor sets locale for queued job rendering
 - TicketsByCategory uses COALESCE(name_ar/name_en, 'Uncategorised') for null categories
+- `app_settings` is now seeded by migration (9 defaults from §13.4); Phase5 tests updated accordingly
+- ResponseTemplate lives in Communication module; Admin CRUD will manage via that namespace
+- AppSetting::get() returns null (not default) when key exists but value IS null
+- ticket_tag pivot: no timestamps, UNIQUE (ticket_id, tag_id), both FKs ON DELETE CASCADE
+- custom_field_values: ON DELETE RESTRICT on custom_field_id (values must be cleared before field hard-delete)
 
 ## Infrastructure notes
-- `app_settings` table not yet created (Phase 8); BusinessHoursCalculator falls back to Sun–Thu 08:00–16:00
 - PermissionServiceProvider registers all config/permissions.php keys as Gate abilities
 - EmployeeTicketScope: passes through for is_super_user, is_tech, or ticket.view-all
+- Pest.php: Unit/Admin added to TestCase + RefreshDatabase directory list
