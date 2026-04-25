@@ -94,6 +94,7 @@ return [
             'accept_transfer'  => 'قبول التحويل',
             'reject_transfer'  => 'رفض التحويل',
             'revoke_transfer'  => 'إلغاء طلب التحويل',
+            'resolve'          => 'حل',
             'close'            => 'إغلاق التذكرة',
             'cancel'           => 'إلغاء التذكرة',
         ],

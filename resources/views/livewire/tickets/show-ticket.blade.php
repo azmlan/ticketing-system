@@ -99,6 +99,11 @@
                         class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     {{ __('tickets.show.actions.hold') }}
                 </button>
+
+                <button wire:click="$dispatch('open-resolve-modal')" type="button"
+                        class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    {{ __('tickets.show.actions.resolve') }}
+                </button>
             @endif
 
             @if ($ticket->status->value === 'on_hold' && $ticket->assigned_to === auth()->id())
@@ -254,4 +259,8 @@
     <div class="mt-8 border-t pt-6">
         @livewire('communication.add-comment', ['ticketUlid' => $ticket->id], key('comments-' . $ticket->id))
     </div>
+
+    @auth
+        @livewire('precedent.resolve-modal', ['ticket' => $ticket], key('resolve-modal-' . $ticket->id))
+    @endauth
 </div>

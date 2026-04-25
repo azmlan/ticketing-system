@@ -58,6 +58,10 @@ docker compose exec app php artisan ...
 - ✅ **7.6** — Synchronous export: ExportService (23-column JOIN query — standard + SLA + CSAT + dynamic custom fields with Schema::hasTable guard), CsvWriter (UTF-8 BOM + fputcsv streamed), XlsxWriter (phpspreadsheet, bold headers, auto-size, temp file), ExportController (permission-gated GET /reports/export?format=csv|xlsx), CSV/XLSX buttons on report page forwarding live filter state; 19 feature tests; new package: phpoffice/phpspreadsheet ^5.7
 - ✅ **7.7** — Queued export via Horizon: notifications + ticket_exports migrations; TicketExport model (ULID PK, filters JSON, include_csat flag, status pending/ready/failed); ExportTicketsJob (ShouldQueue, writes CSV/XLSX to local disk at exports/{ulid}.{ext}, fires ExportReadyNotification via database + mail); ExportController::download() (ownership check, 404 on missing file, deleteFileAfterSend); queueExport() Livewire action (dispatches job, sets exportQueued flag); ExportService + ExportController updated to gate CSAT columns on is_super_user or ticket.view-all; 21 tests (ExportTicketsJobTest + ExportColumnTest)
 
+### Phase 9 (in progress)
+
+- ✅ **9.1** — `resolutions` migration (ULID PK, ticket_id UNIQUE FK CASCADE, self-ref linked_resolution_id FK SET NULL, steps_taken nullable for linking path, usage_count default 0); Resolution model (HasUlids, ticket/creator/linkedResolution/linkedBy relations); ResolutionFactory (4 enum states + linked()); PrecedentServiceProvider registered; Pest.php updated (Feature/Precedent added to RefreshDatabase); 17 feature tests
+
 ### Phase 8 (ALL DONE ✅)
 
 - ✅ **8.1 (admin shell)** — Admin layout, section navigation gated per §13.1, Categories & Subcategories CRUD with versioning, soft-delete/deactivate; commit 6bd8979
@@ -86,6 +90,21 @@ resources/lang/{ar,en}/admin.php  ← branding section (17 keys each)
 
 tests/Feature/Admin/BrandingSettingsTest.php  ← 19 tests
 tests/Feature/Admin/LogoUploadTest.php        ← 8 tests
+```
+
+## Test count (after phase-9 task 9.1)
+**1133 passed, 44 skipped, 0 failed** (+17 from task 9.1)
+
+## Key file locations (phase 9 — task 9.1 resolutions schema)
+
+```
+app/Modules/Precedent/Models/Resolution.php           ← HasUlids; ticket/creator/linkedResolution/linkedBy relations
+app/Modules/Precedent/Providers/PrecedentServiceProvider.php
+database/migrations/2026_09_00_000001_create_resolutions_table.php
+database/factories/ResolutionFactory.php              ← knownFix/workaround/escalatedExternally/other/linked() states
+tests/Feature/Precedent/ResolutionSchemaTest.php      ← 17 tests
+bootstrap/providers.php                               ← PrecedentServiceProvider registered
+tests/Pest.php                                        ← Feature/Precedent added to RefreshDatabase
 ```
 
 ## Test count (after phase-8 task 8.9)

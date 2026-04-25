@@ -94,6 +94,7 @@ return [
             'accept_transfer'  => 'Accept Transfer',
             'reject_transfer'  => 'Reject Transfer',
             'revoke_transfer'  => 'Revoke Transfer',
+            'resolve'          => 'Resolve',
             'close'            => 'Close Ticket',
             'cancel'           => 'Cancel Ticket',
         ],
