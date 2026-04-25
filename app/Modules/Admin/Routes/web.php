@@ -5,6 +5,7 @@ use App\Modules\Admin\Livewire\Categories\SubcategoryIndex;
 use App\Modules\Admin\Livewire\CustomFields\CustomFieldIndex;
 use App\Modules\Admin\Livewire\Groups\GroupIndex;
 use App\Modules\Admin\Livewire\Groups\GroupMembersIndex;
+use App\Modules\Admin\Livewire\Sla\SlaSettingsIndex;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
@@ -29,6 +30,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // ── Custom Fields ─────────────────────────────────────────────────────────
     Route::middleware('can:system.manage-custom-fields')->group(function () {
         Route::get('/custom-fields', CustomFieldIndex::class)->name('custom-fields.index');
+    });
+
+    // ── SLA Settings ──────────────────────────────────────────────────────────
+    Route::middleware('can:system.manage-sla')->group(function () {
+        Route::get('/sla-settings', SlaSettingsIndex::class)->name('sla.settings');
     });
 
 });

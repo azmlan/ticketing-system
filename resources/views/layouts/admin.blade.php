@@ -66,8 +66,9 @@
             @endpermission
 
             @permission('system.manage-sla')
-            <a href="#"
-               class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-700 rounded-md mx-2">
+            <a href="{{ route('admin.sla.settings') }}"
+               class="flex items-center gap-3 px-4 py-2 text-sm hover:bg-gray-700 rounded-md mx-2
+                      {{ request()->routeIs('admin.sla*') ? 'bg-gray-700' : '' }}">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                 </svg>
