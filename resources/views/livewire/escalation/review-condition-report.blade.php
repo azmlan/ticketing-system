@@ -64,12 +64,14 @@
     <div class="flex flex-wrap gap-3">
         <button wire:click="approve"
                 wire:confirm="{{ __('escalation.review.approve_confirm') }}"
-                type="button">
+                type="button"
+                class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
             {{ __('escalation.review.approve') }}
         </button>
 
         @if (! $showRejectForm)
-            <button wire:click="$set('showRejectForm', true)" type="button">
+            <button wire:click="$set('showRejectForm', true)" type="button"
+                    class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                 {{ __('escalation.review.reject') }}
             </button>
         @endif
@@ -84,13 +86,16 @@
             <div class="flex flex-col gap-2 max-w-md">
                 <textarea wire:model="reviewNotes"
                           rows="4"
-                          placeholder="{{ __('escalation.review.review_notes_placeholder') }}"></textarea>
+                          placeholder="{{ __('escalation.review.review_notes_placeholder') }}"
+                          class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
 
                 <div class="flex gap-2">
-                    <button wire:click="reject" type="button">
+                    <button wire:click="reject" type="button"
+                            class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                         {{ __('escalation.review.submit_rejection') }}
                     </button>
-                    <button wire:click="$set('showRejectForm', false)" type="button">
+                    <button wire:click="$set('showRejectForm', false)" type="button"
+                            class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                         {{ __('escalation.review.cancel') }}
                     </button>
                 </div>

@@ -15,7 +15,7 @@ export default defineConfig({
         port: 5173,
         hmr: {
             host: 'localhost',
-            port: 5174,
+            clientPort: 5174,
         },
         watch: {
             ignored: ['**/storage/framework/views/**'],

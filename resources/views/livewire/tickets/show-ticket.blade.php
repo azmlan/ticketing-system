@@ -13,7 +13,6 @@
             <p>{{ __('tickets.show.group') }}: {{ $ticket->group->localizedName() }}</p>
         @endif
 
-        {{-- SLA Indicator --}}
         @if ($ticketSla)
             <div class="mt-3 flex flex-wrap gap-2 items-center">
                 <span class="text-sm text-gray-500 font-medium">{{ __('sla.indicator.title') }}:</span>
@@ -31,7 +30,6 @@
         {!! $ticket->description !!}
     </div>
 
-    {{-- Attachments --}}
     @if ($ticket->attachments->isNotEmpty())
         <div class="mb-6">
             <h3 class="font-semibold mb-2">{{ __('tickets.show.attachments') }}</h3>
@@ -48,84 +46,85 @@
         </div>
     @endif
 
-    {{-- Actions --}}
     <div class="flex flex-wrap gap-3">
 
-        {{-- Self-assign --}}
         @can('selfAssign', $ticket)
-            <button wire:click="selfAssign" type="button">
+            <button wire:click="selfAssign" type="button"
+                    class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                 {{ __('tickets.show.actions.self_assign') }}
             </button>
         @endcan
 
-        {{-- Manager / IT-manager assign --}}
         @can('assign', $ticket)
             <div class="flex gap-2">
-                <select wire:model="assignToUserId">
+                <select wire:model="assignToUserId"
+                        class="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                     <option value="">{{ __('tickets.show.select_tech') }}</option>
                     @foreach ($techs as $tech)
                         <option value="{{ $tech->id }}">{{ $tech->full_name }}</option>
                     @endforeach
                 </select>
-                <button wire:click="managerAssign(assignToUserId)" type="button">
+                <button wire:click="managerAssign(assignToUserId)" type="button"
+                        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
                     {{ __('tickets.show.actions.assign_to') }}
                 </button>
             </div>
         @endcan
 
-        {{-- Put on hold --}}
         @auth
             @if ($ticket->status->value === 'in_progress' && $ticket->assigned_to === auth()->id())
-                <button wire:click="hold" type="button">
+                <button wire:click="hold" type="button"
+                        class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                     {{ __('tickets.show.actions.hold') }}
                 </button>
             @endif
 
-            {{-- Resume from hold --}}
             @if ($ticket->status->value === 'on_hold' && $ticket->assigned_to === auth()->id())
-                <button wire:click="resume" type="button">
+                <button wire:click="resume" type="button"
+                        class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                     {{ __('tickets.show.actions.resume') }}
                 </button>
             @endif
         @endauth
 
-        {{-- Request transfer --}}
         @can('requestTransfer', $ticket)
             @if (! $pendingTransfer)
                 <div class="flex gap-2">
-                    <select wire:model="transferToUserId">
+                    <select wire:model="transferToUserId"
+                            class="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                         <option value="">{{ __('tickets.show.select_tech') }}</option>
                         @foreach ($techs as $tech)
                             <option value="{{ $tech->id }}">{{ $tech->full_name }}</option>
                         @endforeach
                     </select>
-                    <button wire:click="requestTransfer(transferToUserId)" type="button">
+                    <button wire:click="requestTransfer(transferToUserId)" type="button"
+                            class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                         {{ __('tickets.show.actions.request_transfer') }}
                     </button>
                 </div>
             @endif
         @endcan
 
-        {{-- Accept / Reject transfer (target tech) --}}
         @if ($pendingTransfer && $pendingTransfer->to_user_id === auth()->id())
-            <button wire:click="acceptTransfer('{{ $pendingTransfer->id }}')" type="button">
+            <button wire:click="acceptTransfer('{{ $pendingTransfer->id }}')" type="button"
+                    class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
                 {{ __('tickets.show.actions.accept_transfer') }}
             </button>
-            <button wire:click="rejectTransfer('{{ $pendingTransfer->id }}')" type="button">
+            <button wire:click="rejectTransfer('{{ $pendingTransfer->id }}')" type="button"
+                    class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                 {{ __('tickets.show.actions.reject_transfer') }}
             </button>
         @endif
 
-        {{-- Revoke transfer (requesting tech) --}}
         @if ($pendingTransfer && $pendingTransfer->from_user_id === auth()->id())
-            <button wire:click="revokeTransfer('{{ $pendingTransfer->id }}')" type="button">
+            <button wire:click="revokeTransfer('{{ $pendingTransfer->id }}')" type="button"
+                    class="rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
                 {{ __('tickets.show.actions.revoke_transfer') }}
             </button>
         @endif
 
     </div>
 
-    {{-- Close ticket (permission:ticket.close) --}}
     @can('close', $ticket)
         @if (! in_array($ticket->status->value, ['closed', 'cancelled']))
             <div class="mt-6 border-t pt-4">
@@ -135,7 +134,8 @@
                 @error('closeReasonText') <p class="text-red-600 text-sm mb-1">{{ $message }}</p> @enderror
 
                 <div class="flex flex-col gap-2 max-w-md">
-                    <select wire:model.live="closeReason">
+                    <select wire:model.live="closeReason"
+                            class="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                         <option value="">{{ __('tickets.show.select_close_reason') }}</option>
                         @foreach (\App\Modules\Tickets\Livewire\ShowTicket::CLOSE_REASONS as $reason)
                             <option value="{{ $reason }}">{{ __('tickets.close_reasons.' . $reason) }}</option>
@@ -143,14 +143,15 @@
                     </select>
 
                     @if ($closeReason === 'other')
-                        <textarea wire:model="closeReasonText"
-                                  rows="3"
-                                  placeholder="{{ __('tickets.show.close_reason_text_placeholder') }}"></textarea>
+                        <textarea wire:model="closeReasonText" rows="3"
+                                  placeholder="{{ __('tickets.show.close_reason_text_placeholder') }}"
+                                  class="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
                     @endif
 
                     <button wire:click="close"
                             wire:confirm="{{ __('tickets.show.close_confirm') }}"
-                            type="button">
+                            type="button"
+                            class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                         {{ __('tickets.show.actions.close') }}
                     </button>
                 </div>
@@ -158,18 +159,17 @@
         @endif
     @endcan
 
-    {{-- Cancel ticket (requester only) --}}
     @if (auth()->id() === $ticket->requester_id && ! in_array($ticket->status->value, ['closed', 'cancelled']))
         <div class="mt-4">
             <button wire:click="cancel"
                     wire:confirm="{{ __('tickets.show.cancel_confirm') }}"
-                    type="button">
+                    type="button"
+                    class="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                 {{ __('tickets.show.actions.cancel') }}
             </button>
         </div>
     @endif
 
-    {{-- Condition Report (tech only, in_progress tickets) --}}
     @auth
         @if (auth()->user()->is_tech && $ticket->status->value === 'in_progress')
             <div class="mt-8 border-t pt-6">
@@ -178,7 +178,6 @@
         @endif
     @endauth
 
-    {{-- Review Condition Report (escalation.approve, awaiting_approval tickets) --}}
     @can('escalation.approve')
         @if ($ticket->status->value === 'awaiting_approval')
             <div class="mt-8 border-t pt-6">
@@ -187,14 +186,12 @@
         @endif
     @endcan
 
-    {{-- Requester: upload signed maintenance request (action_required) --}}
     @if ($ticket->status->value === 'action_required' && auth()->id() === $ticket->requester_id)
         <div class="mt-8 border-t pt-6">
             @livewire('escalation.upload-signed-maintenance-request', ['ticketId' => $ticket->id], key('upload-signed-' . $ticket->id))
         </div>
     @endif
 
-    {{-- Tech / approver: download buttons only (action_required, not requester) --}}
     @if ($ticket->status->value === 'action_required' && auth()->id() !== $ticket->requester_id)
         @auth
             @php
@@ -206,10 +203,12 @@
                 <div class="mt-8 border-t pt-6">
                     <h3 class="font-semibold mb-3">{{ __('escalation.maintenance_request.title') }}</h3>
                     <div class="flex flex-wrap gap-3">
-                        <a href="{{ route('escalation.maintenance-request.download', [$ticket->id, 'ar']) }}">
+                        <a href="{{ route('escalation.maintenance-request.download', [$ticket->id, 'ar']) }}"
+                           class="inline-block rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
                             {{ __('escalation.maintenance_request.export_ar') }}
                         </a>
-                        <a href="{{ route('escalation.maintenance-request.download', [$ticket->id, 'en']) }}">
+                        <a href="{{ route('escalation.maintenance-request.download', [$ticket->id, 'en']) }}"
+                           class="inline-block rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200">
                             {{ __('escalation.maintenance_request.export_en') }}
                         </a>
                     </div>
@@ -218,7 +217,6 @@
         @endauth
     @endif
 
-    {{-- Approver: final review (awaiting_final_approval) --}}
     @can('escalation.approve')
         @if ($ticket->status->value === 'awaiting_final_approval')
             <div class="mt-8 border-t pt-6">
@@ -227,12 +225,10 @@
         @endif
     @endcan
 
-    {{-- CSAT Rating --}}
     @auth
         @livewire('csat.rating-section', ['ticketId' => $ticket->id], key('csat-' . $ticket->id))
     @endauth
 
-    {{-- Comments --}}
     <div class="mt-8 border-t pt-6">
         @livewire('communication.add-comment', ['ticketUlid' => $ticket->id], key('comments-' . $ticket->id))
     </div>

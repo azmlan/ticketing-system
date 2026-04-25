@@ -1,5 +1,4 @@
 <div>
-    {{-- Comment form --}}
     @auth
         <div class="mb-6">
             <h3 class="font-semibold mb-4">{{ __('communication.comments.section_title') }}</h3>
@@ -7,13 +6,13 @@
             <form wire:submit="submit" novalidate>
                 @csrf
 
-                {{-- Response template selector (techs / super-users only) --}}
                 @if (auth()->user()->is_tech || auth()->user()->is_super_user)
                     <div class="mb-4">
-                        <label class="block text-sm font-medium mb-1">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
                             {{ __('communication.comments.template_label') }}
                         </label>
-                        <select wire:model.live="selectedTemplate" class="w-full">
+                        <select wire:model.live="selectedTemplate"
+                                class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             <option value="">{{ __('communication.comments.select_template') }}</option>
                             @foreach ($templates as $tpl)
                                 <option value="{{ $tpl['id'] }}">{{ $tpl['title'] }}</option>
@@ -21,37 +20,38 @@
                         </select>
                     </div>
 
-                    {{-- Internal / public toggle --}}
                     <div class="mb-4">
                         <label class="inline-flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" wire:model="isInternal">
-                            <span class="text-sm">{{ __('communication.comments.internal_label') }}</span>
+                            <input type="checkbox" wire:model="isInternal"
+                                   class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                            <span class="text-sm text-gray-700">{{ __('communication.comments.internal_label') }}</span>
                         </label>
                     </div>
                 @endif
 
-                {{-- Body --}}
                 <div class="mb-4">
-                    <label class="block text-sm font-medium mb-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">
                         {{ __('communication.comments.body_label') }}
                     </label>
                     <textarea wire:model="body"
                               rows="4"
                               maxlength="10000"
                               placeholder="{{ __('communication.comments.body_placeholder') }}"
-                              class="w-full"
-                              required></textarea>
+                              required
+                              class="block w-full rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
                     @error('body')
                         <span class="text-red-600 text-sm">{{ $message }}</span>
                     @enderror
                 </div>
 
-                <button type="submit">{{ __('communication.comments.submit') }}</button>
+                <button type="submit"
+                        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    {{ __('communication.comments.submit') }}
+                </button>
             </form>
         </div>
     @endauth
 
-    {{-- Comment timeline --}}
     @if ($comments->isNotEmpty())
         <div class="mt-4 space-y-4">
             @foreach ($comments as $comment)
