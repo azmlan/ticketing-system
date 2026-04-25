@@ -4,6 +4,8 @@ namespace App\Modules\Reporting\Livewire;
 
 use App\Modules\Admin\Models\Category;
 use App\Modules\Admin\Models\Group;
+use App\Modules\Reporting\Jobs\ExportTicketsJob;
+use App\Modules\Reporting\Models\TicketExport;
 use App\Modules\Reporting\Services\ReportService;
 use App\Modules\Shared\Models\User;
 use Livewire\Attributes\Layout;
@@ -27,6 +29,8 @@ class ReportPage extends Component
     public string $techId = '';
 
     public string $status = '';
+
+    public bool $exportQueued = false;
 
     public function mount(): void
     {
@@ -58,6 +62,31 @@ class ReportPage extends Component
         $this->groupId = '';
         $this->techId = '';
         $this->status = '';
+    }
+
+    public function queueExport(string $format): void
+    {
+        abort_unless(
+            auth()->user()->is_super_user || auth()->user()->hasPermission('system.view-reports'),
+            403
+        );
+
+        $user = auth()->user();
+        $includeCsat = $user->is_super_user || $user->hasPermission('ticket.view-all');
+
+        $export = TicketExport::create([
+            'user_id' => $user->id,
+            'format' => in_array($format, ['csv', 'xlsx']) ? $format : 'csv',
+            'filters' => array_filter($this->buildFilters()),
+            'locale' => $user->locale ?? 'ar',
+            'include_csat' => $includeCsat,
+            'status' => 'pending',
+            'expires_at' => now()->addDay(),
+        ]);
+
+        ExportTicketsJob::dispatch($export->id);
+
+        $this->exportQueued = true;
     }
 
     public function render(ReportService $reportService)

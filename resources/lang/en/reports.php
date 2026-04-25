@@ -79,6 +79,14 @@ return [
     'export' => [
         'download_csv'  => 'Download CSV',
         'download_xlsx' => 'Download XLSX',
+        'queue_csv'     => 'Queue CSV Export',
+        'queue_xlsx'    => 'Queue XLSX Export',
+        'queued_notice' => 'Your export is being generated. You will receive an email when it is ready.',
+
+        'notification_subject' => 'Your export is ready',
+        'notification_body'    => 'Your :format export has been generated and is ready to download.',
+        'notification_action'  => 'Download Export',
+        'notification_expires' => 'This download link will expire after 24 hours.',
 
         // Standard column headers
         'ticket_number' => 'Ticket #',

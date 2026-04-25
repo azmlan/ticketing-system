@@ -79,6 +79,14 @@ return [
     'export' => [
         'download_csv'  => 'تنزيل CSV',
         'download_xlsx' => 'تنزيل XLSX',
+        'queue_csv'     => 'تصدير CSV في الخلفية',
+        'queue_xlsx'    => 'تصدير XLSX في الخلفية',
+        'queued_notice' => 'جارٍ إنشاء ملف التصدير. ستتلقى إشعاراً بالبريد الإلكتروني عند اكتماله.',
+
+        'notification_subject' => 'ملف التصدير جاهز للتنزيل',
+        'notification_body'    => 'تم إنشاء ملف التصدير بصيغة :format وهو جاهز للتنزيل.',
+        'notification_action'  => 'تنزيل الملف',
+        'notification_expires' => 'رابط التنزيل صالح لمدة 24 ساعة.',
 
         // Standard column headers
         'ticket_number' => 'رقم التذكرة',

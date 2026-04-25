@@ -82,8 +82,8 @@
             </div>
         </div>
 
-        <div class="mt-3 flex justify-between items-center">
-            <div class="flex gap-2">
+        <div class="mt-3 flex justify-between items-center flex-wrap gap-3">
+            <div class="flex gap-2 flex-wrap">
                 <a href="{{ $csvExportUrl }}"
                    class="text-sm bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
                     {{ __('reports.export.download_csv') }}
@@ -92,12 +92,25 @@
                    class="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded">
                     {{ __('reports.export.download_xlsx') }}
                 </a>
+                <button wire:click="queueExport('csv')"
+                        class="text-sm bg-green-100 hover:bg-green-200 text-green-800 px-3 py-1 rounded border border-green-300">
+                    {{ __('reports.export.queue_csv') }}
+                </button>
+                <button wire:click="queueExport('xlsx')"
+                        class="text-sm bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1 rounded border border-blue-300">
+                    {{ __('reports.export.queue_xlsx') }}
+                </button>
             </div>
             <button wire:click="resetFilters"
                     class="text-sm text-gray-500 hover:text-gray-700 px-3 py-1 rounded border">
                 {{ __('common.clear') }}
             </button>
         </div>
+        @if ($exportQueued)
+            <div class="mt-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded px-3 py-2">
+                {{ __('reports.export.queued_notice') }}
+            </div>
+        @endif
     </div>
 
     {{-- Report table --}}

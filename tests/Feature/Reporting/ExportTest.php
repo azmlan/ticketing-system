@@ -97,8 +97,9 @@ it('csv contains sla column headers', function () {
     expect($headers)->toContain(__('reports.export.sla_total_paused_mins'));
 });
 
-it('csv contains csat column headers', function () {
-    $manager = makeExportManager();
+it('csv contains csat column headers for IT manager (super user)', function () {
+    // CSAT columns only visible to IT Manager (super user or ticket.view-all)
+    $manager = User::factory()->create(['is_super_user' => true]);
 
     $response = $this->actingAs($manager)->get(route('reports.export', ['format' => 'csv']));
 
@@ -165,7 +166,8 @@ it('csv includes sla data when ticket has sla record', function () {
 });
 
 it('csv includes csat data when ticket has submitted rating', function () {
-    $manager   = makeExportManager();
+    // CSAT data only returned for IT Manager (super user)
+    $manager   = User::factory()->create(['is_super_user' => true]);
     $tech      = User::factory()->tech()->create();
     $requester = User::factory()->create(['is_tech' => false]);
     $ticket    = Ticket::factory()->create(['assigned_to' => $tech->id]);

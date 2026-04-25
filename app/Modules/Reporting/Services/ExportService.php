@@ -9,17 +9,21 @@ use Illuminate\Support\Facades\Schema;
 
 class ExportService
 {
-    public function exportHeaders(): array
+    public function exportHeaders(bool $includeCsat = true): array
     {
-        return array_merge(
+        $headers = array_merge(
             $this->standardHeaders(),
             $this->slaHeaders(),
-            $this->csatHeaders(),
-            $this->customFieldHeaders()
         );
+
+        if ($includeCsat) {
+            $headers = array_merge($headers, $this->csatHeaders());
+        }
+
+        return array_merge($headers, $this->customFieldHeaders());
     }
 
-    public function exportRows(array $filters): array
+    public function exportRows(array $filters, bool $includeCsat = true): array
     {
         $locale = app()->getLocale();
         $customFields = $this->customFieldColumns();
@@ -30,7 +34,7 @@ class ExportService
         return $query
             ->orderBy('tickets.created_at', 'desc')
             ->get()
-            ->map(fn ($row) => $this->mapRow($row, $locale, $customFields))
+            ->map(fn ($row) => $this->mapRow($row, $locale, $customFields, $includeCsat))
             ->toArray();
     }
 
@@ -156,7 +160,7 @@ class ExportService
         }
     }
 
-    private function mapRow(object $row, string $locale, array $customFields): array
+    private function mapRow(object $row, string $locale, array $customFields, bool $includeCsat = true): array
     {
         $cells = [
             $row->display_number,
@@ -179,12 +183,14 @@ class ExportService
             $row->resolution_elapsed_minutes ?? '',
             $row->resolution_status ? __('reports.export.sla_statuses.'.$row->resolution_status) : '',
             $row->total_paused_minutes ?? 0,
-            // CSAT
-            $row->csat_rating ?? '',
-            $row->csat_comment ?? '',
-            $row->csat_submitted_at ?? '',
-            $row->csat_status ? __('reports.export.csat_statuses.'.$row->csat_status) : '',
         ];
+
+        if ($includeCsat) {
+            $cells[] = $row->csat_rating ?? '';
+            $cells[] = $row->csat_comment ?? '';
+            $cells[] = $row->csat_submitted_at ?? '';
+            $cells[] = $row->csat_status ? __('reports.export.csat_statuses.'.$row->csat_status) : '';
+        }
 
         foreach ($customFields as $field) {
             $cells[] = $this->getCustomFieldValue($row->ticket_id, $field->field_id);
