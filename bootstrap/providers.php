@@ -11,4 +11,5 @@ return [
     App\Modules\Communication\Providers\CommunicationServiceProvider::class,
     App\Modules\SLA\Providers\SlaServiceProvider::class,
     App\Modules\CSAT\Providers\CsatServiceProvider::class,
+    App\Modules\Reporting\Providers\ReportingServiceProvider::class,
 ];
